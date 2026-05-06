@@ -1,5 +1,6 @@
 import Sidebar from "./components/Sidebar";
 
+// ✅ SEO + Google登録
 export const metadata = {
   title: "和田広野 | バリトン歌手 公式サイト",
   description:
@@ -19,13 +20,17 @@ export default function RootLayout({
     <html lang="ja">
       <body style={{ margin: 0 }}>
         <div style={{ display: "flex" }}>
+
+          {/* ✅ サイドバー */}
           <Sidebar />
+
+          {/* ✅ コンテンツ */}
           <main style={{ flex: 1 }}>
             {children}
           </main>
+
         </div>
       </body>
     </html>
   );
 }
-``

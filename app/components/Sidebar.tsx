@@ -9,7 +9,7 @@ export default function Sidebar() {
   const [open, setOpen] = useState(false);
 
   const menuStyle = (path: string) => ({
-    marginBottom: "20px",
+    marginBottom: "15px",
     paddingLeft: "10px",
     borderLeft:
       pathname === path ? "4px solid white" : "4px solid transparent",
@@ -23,85 +23,63 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ✅ ハンバーガー */}
+      {/* ✅ 必ず見えるハンバーガー */}
       <div
         onClick={() => setOpen(!open)}
         style={{
-          display: "none",
+          position: "fixed",     // ✅ 上に固定（重要）
+          top: 0,
+          left: 0,
+          width: "100%",
           background: "#111",
           color: "#fff",
           padding: "15px",
+          zIndex: 1000,          // ✅ 前面に表示
           cursor: "pointer",
         }}
-        className="hamburger"
       >
         ☰ メニュー
       </div>
 
-      {/* ✅ サイドメニュー */}
+      {/* ✅ メニュー本体 */}
       <nav
         style={{
+          position: "fixed",
+          top: "50px",
+          left: 0,
           width: "200px",
+          height: "100vh",
           background: "#111",
           color: "#fff",
-          minHeight: "100vh",
           padding: "20px",
-          position: "sticky",
-          top: 0,
+          display: open ? "block" : "none",
+          zIndex: 999,
         }}
-        className={open ? "sidebar open" : "sidebar"}
       >
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <ul style={{ listStyle: "none", padding: 0 }}>
 
           <li style={menuStyle("/")}>
-            <Link href="/" style={linkStyle}>
-              公演情報
-            </Link>
+            <Link href="/" style={linkStyle}>公演情報</Link>
           </li>
 
           <li style={menuStyle("/profile")}>
-            <Link href="/profile" style={linkStyle}>
-              プロフィール
-            </Link>
+            <Link href="/profile" style={linkStyle}>プロフィール</Link>
           </li>
 
           <li style={menuStyle("/repertoire")}>
-            <Link href="/repertoire" style={linkStyle}>
-              レパートリー
-            </Link>
+            <Link href="/repertoire" style={linkStyle}>レパートリー</Link>
           </li>
 
           <li style={menuStyle("/gallery")}>
-            <Link href="/gallery" style={linkStyle}>
-              写真・動画
-            </Link>
+            <Link href="/gallery" style={linkStyle}>写真・動画</Link>
           </li>
 
           <li style={menuStyle("/contact")}>
-            <Link href="/contact" style={linkStyle}>
-              お問い合わせ
-            </Link>
+            <Link href="/contact" style={linkStyle}>お問い合わせ</Link>
           </li>
 
         </ul>
       </nav>
-
-      {/* ✅ スマホ用クラスだけ使う（styleタグは削除） */}
-      <style>{`
-        @media (max-width: 768px) {
-          .hamburger {
-            display: block;
-          }
-          .sidebar {
-            display: none;
-            width: 100%;
-            min-height: auto;
-          }
-          .sidebar.open {
-            display: block;
-          }
-        }
-      `}</style>
     </>
   );
 }
