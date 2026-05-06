@@ -1,5 +1,15 @@
 import Sidebar from "./components/Sidebar";
 
+export const metadata = {
+  title: "和田広野 | バリトン歌手 公式サイト",
+  description:
+    "バリトン歌手 和田広野の公式サイト。公演情報・プロフィール・レパートリー・写真・動画・お問い合わせはこちら。",
+
+  verification: {
+    google: "X6hXtfD-CHOduYANMlCTr4tMOdQm-vVsbN9cr40-4g0",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -8,15 +18,8 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body style={{ margin: 0 }}>
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          {/* ✅ サイドバー */}
+        <div style={{ display: "flex" }}>
           <Sidebar />
-
-          {/* ✅ メイン */}
           <main style={{ flex: 1 }}>
             {children}
           </main>
@@ -25,3 +28,4 @@ export default function RootLayout({
     </html>
   );
 }
+``
