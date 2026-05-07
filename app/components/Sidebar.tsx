@@ -23,18 +23,18 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ✅ 必ず見えるハンバーガー */}
+      {/* ✅ スマホでも必ず見えるハンバーガー */}
       <div
         onClick={() => setOpen(!open)}
         style={{
-          position: "fixed",     // ✅ 上に固定（重要）
+          position: "fixed",
           top: 0,
           left: 0,
           width: "100%",
           background: "#111",
           color: "#fff",
           padding: "15px",
-          zIndex: 1000,          // ✅ 前面に表示
+          zIndex: 1000,
           cursor: "pointer",
         }}
       >
@@ -47,39 +47,76 @@ export default function Sidebar() {
           position: "fixed",
           top: "50px",
           left: 0,
-          width: "200px",
+          width: "220px",
           height: "100vh",
           background: "#111",
           color: "#fff",
           padding: "20px",
           display: open ? "block" : "none",
           zIndex: 999,
+          overflowY: "auto",
         }}
       >
-        <ul style={{ listStyle: "none", padding: 0 }}>
-
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           <li style={menuStyle("/")}>
-            <Link href="/" style={linkStyle}>公演情報</Link>
+            <Link href="/" style={linkStyle} onClick={() => setOpen(false)}>
+              公演情報
+            </Link>
+          </li>
+
+          {/* ✅ 追加：過去公演 */}
+          <li style={menuStyle("/past-concerts")}>
+            <Link
+              href="/past-concerts"
+              style={linkStyle}
+              onClick={() => setOpen(false)}
+            >
+              過去公演
+            </Link>
           </li>
 
           <li style={menuStyle("/profile")}>
-            <Link href="/profile" style={linkStyle}>プロフィール</Link>
+            <Link
+              href="/profile"
+              style={linkStyle}
+              onClick={() => setOpen(false)}
+            >
+              プロフィール
+            </Link>
           </li>
 
           <li style={menuStyle("/repertoire")}>
-            <Link href="/repertoire" style={linkStyle}>レパートリー</Link>
+            <Link
+              href="/repertoire"
+              style={linkStyle}
+              onClick={() => setOpen(false)}
+            >
+              レパートリー
+            </Link>
           </li>
 
           <li style={menuStyle("/gallery")}>
-            <Link href="/gallery" style={linkStyle}>写真・動画</Link>
+            <Link
+              href="/gallery"
+              style={linkStyle}
+              onClick={() => setOpen(false)}
+            >
+              写真・動画
+            </Link>
           </li>
 
           <li style={menuStyle("/contact")}>
-            <Link href="/contact" style={linkStyle}>お問い合わせ</Link>
+            <Link
+              href="/contact"
+              style={linkStyle}
+              onClick={() => setOpen(false)}
+            >
+              お問い合わせ
+            </Link>
           </li>
-
         </ul>
       </nav>
     </>
   );
 }
+``
