@@ -17,7 +17,7 @@ export default function Sidebar() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // /concert/xxx でも「公演情報」をアクティブ扱い
+  // /concert/xxx でも「TOP・公演情報」をアクティブ扱い
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/" || pathname.startsWith("/concert");
     return pathname === path || pathname.startsWith(path + "/");
@@ -91,7 +91,7 @@ export default function Sidebar() {
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li style={menuItemStyle("/")}>
               <Link href="/" style={linkStyle} onClick={closeOnMobile}>
-                公演情報
+                TOP・公演情報
               </Link>
             </li>
 

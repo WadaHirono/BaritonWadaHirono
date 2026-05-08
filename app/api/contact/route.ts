@@ -1,10 +1,23 @@
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  const { name, email, message } = await request.json();
 
-  console.log("お問い合わせ内容:", body);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
-  // ✅ 一旦はログ出力だけ（テスト）
-  return NextResponse.json({ message: "OK" });
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_USER,
+    subject: "お問い合わせ",
+    text: `${name}\n${email}\n${message}`,
+  });
+
+  return NextResponse.json({ ok: true });
 }
