@@ -32,7 +32,7 @@ export default function ContactPage() {
 
         {/* レッスン申込ボタン */}
         <a
-          href="/レッスン申込書.xlsx"
+          href="/レッスン申込表.xlsx"
           download
           style={{
             display: "block",
