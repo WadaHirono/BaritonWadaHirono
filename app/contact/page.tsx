@@ -15,7 +15,7 @@ export default function ContactPage() {
 
       <p style={{ marginTop: "30px" }}>
         その他のお問い合わせはメールでご連絡ください。<br />
-        📩 example@gmail.com
+        📩 donchan.hirono528@gmail.com
       </p>
     </main>
   );
