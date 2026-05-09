@@ -1,7 +1,9 @@
 export const dynamic = "force-dynamic";
 
-import ConcertLightboxGallery from "@/components/ConcertLightboxGallery";
 import { client } from "@/lib/sanity";
+
+// ✅ importパス（ここがオレンジ原因の可能性大）
+import ConcertLightboxGallery from "../../components/ConcertLightboxGallery";
 
 export default async function ConcertDetailPage({
   params,
@@ -38,51 +40,72 @@ export default async function ConcertDetailPage({
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
       
+      {/* ✅ タイトル */}
       <h1 style={{ fontSize: "30px", marginBottom: "15px" }}>
         {concert.title}
       </h1>
 
+      {/* ✅ 日付 */}
       {concert.date && (
         <p style={{ color: "#666", marginBottom: "5px" }}>
           {new Date(concert.date).toLocaleDateString("ja-JP")}
         </p>
       )}
 
+      {/* ✅ 会場 */}
       {concert.venue && (
         <p style={{ marginBottom: "20px" }}>{concert.venue}</p>
       )}
 
-      {/* ✅ ギャラリー */}
+      {/* ✅ ギャラリー（拡大付き） */}
       <ConcertLightboxGallery
         title={concert.title}
         mainImage={concert.mainImage}
         gallery={concert.gallery}
       />
 
+      {/* ✅ 説明 */}
       {concert.description && (
-        <p style={{ whiteSpace: "pre-line", lineHeight: "1.8", marginBottom: "20px" }}>
+        <p
+          style={{
+            whiteSpace: "pre-line",
+            lineHeight: "1.8",
+            marginBottom: "20px",
+          }}
+        >
           {concert.description}
         </p>
       )}
 
+      {/* ✅ 料金 */}
       {concert.price && (
         <p style={{ fontWeight: "bold", marginBottom: "20px" }}>
           {concert.price}
         </p>
       )}
 
+      {/* ✅ チケット */}
       {concert.ticketUrl && (
         <div style={{ marginBottom: "30px" }}>
           <a
             href={concert.ticketUrl}
             target="_blank"
             rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              padding: "12px 18px",
+              background: "#000",
+              color: "#fff",
+              borderRadius: "8px",
+              textDecoration: "none",
+            }}
           >
             🎫 チケットを購入
           </a>
         </div>
       )}
 
+      {/* ✅ 地図 */}
       {concert.mapUrl && (
         <div>
           <h2 style={{ marginBottom: "10px" }}>会場案内</h2>
