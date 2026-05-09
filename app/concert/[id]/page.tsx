@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { client } from "@/lib/sanity";
-import ConcertLightboxGallery from "../../components/ConcertLightboxGallery";
+import ConcertLightboxGallery from "@/components/ConcertLightboxGallery";
 
 export default async function ConcertDetailPage({
   params,
