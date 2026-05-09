@@ -36,17 +36,20 @@ export default async function ConcertDetailPage({
 
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-      <h1 style={{ fontSize: "30px", marginBottom: "15px" }}>{concert.title}</h1>
+      
+      <h1 style={{ fontSize: "30px", marginBottom: "15px" }}>
+        {concert.title}
+      </h1>
 
       {concert.date && (
-        <p style={{ color: "#666", marginBottom: "5px" }}>
+        <p style={{ color: "#666" }}>
           {new Date(concert.date).toLocaleDateString("ja-JP")}
         </p>
       )}
 
-      {concert.venue && <p style={{ marginBottom: "20px" }}>{concert.venue}</p>}
+      {concert.venue && <p>{concert.venue}</p>}
 
-      {/* ✅ 画像（クリック拡大 + サムネ中央寄せ） */}
+      {/* ✅ ギャラリー */}
       <ConcertLightboxGallery
         title={concert.title}
         mainImage={concert.mainImage}
@@ -54,46 +57,25 @@ export default async function ConcertDetailPage({
       />
 
       {concert.description && (
-        <p style={{ whiteSpace: "pre-line", lineHeight: "1.8", marginBottom: "20px" }}>
+        <p style={{ whiteSpace: "pre-line" }}>
           {concert.description}
         </p>
       )}
 
-      {concert.price && (
-        <p style={{ fontWeight: "bold", marginBottom: "20px" }}>{concert.price}</p>
-      )}
+      {concert.price && <p>{concert.price}</p>}
 
       {concert.ticketUrl && (
-        <div style={{ marginBottom: "30px" }}>
-          <a
-            href={concert.ticketUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-block",
-              padding: "12px 18px",
-              background: "#000",
-              color: "#fff",
-              borderRadius: "8px",
-              textDecoration: "none",
-            }}
-          >
-            🎫 チケットを購入
-          </a>
-        </div>
+        <a href={concert.ticketUrl} target="_blank">
+          🎫 チケット購入
+        </a>
       )}
 
       {concert.mapUrl && (
-        <div>
-          <h2 style={{ marginBottom: "10px" }}>会場案内</h2>
-          <iframe
-            src={concert.mapUrl}
-            width="100%"
-            height="300"
-            style={{ border: 0 }}
-            loading="lazy"
-          />
-        </div>
+        <iframe
+          src={concert.mapUrl}
+          width="100%"
+          height="300"
+        />
       )}
     </main>
   );
