@@ -6,11 +6,11 @@ import { urlFor } from "@/lib/image";
 type GalleryDoc = {
   _id: string;
   title?: string;
-  images?: any[];
-  videos?: string[];
+  image?: any;       // ✅ 単一画像
+  videos?: string[]; // ✅ 複数動画
 };
 
-// ✅ YouTube URL → embed変換
+// ✅ YouTube URL → 埋め込み変換
 function toEmbedUrl(url: string) {
   try {
     const u = new URL(url);
@@ -44,7 +44,7 @@ export default async function GalleryPage() {
       `*[_type == "gallery"] | order(_createdAt desc){
         _id,
         title,
-        images,
+        image,
         videos
       }`
     );
@@ -67,71 +67,59 @@ export default async function GalleryPage() {
 
   return (
     <main style={{ maxWidth: "1000px", margin: "0 auto", padding: "40px" }}>
-      <h1>写真・動画</h1>
+      <h1 style={{ marginBottom: "20px" }}>写真・動画</h1>
 
       {items.map((doc) => (
-        <section key={doc._id} style={{ marginBottom: "30px" }}>
-          {doc.title && <h2>{doc.title}</h2>}
+        <section key={doc._id} style={{ marginBottom: "40px" }}>
+          
+          {doc.title && (
+            <h2 style={{ marginBottom: "15px" }}>
+              {doc.title}
+            </h2>
+          )}
 
-          {/* ✅ 画像 */}
-          {Array.isArray(doc.images) && doc.images.length > 0 && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "10px",
-                marginBottom: "15px",
-              }}
-            >
-              {doc.images.map((img, i) => {
-                if (!img) return null;
-
-                return (
-                  <img
-                    key={i}
-                    src={urlFor(img).width(600).auto("format").url()}
-                    alt={doc.title ?? "image"}
-                    style={{
-                      width: "100%",
-                      height: "180px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                    }}
-                  />
-                );
-              })}
+          {/* ✅ 画像（単体） */}
+          {doc.image && (
+            <div style={{ marginBottom: "20px" }}>
+              {urlFor(doc.image).width(800).auto("format").url()}                alt={doc.title ?? "image"}
+                style={{
+                  width: "100%",
+                  borderRadius: "12px",
+                }}
+              />
             </div>
           )}
 
-          {/* ✅ 動画（完全修正版） */}
+          {/* ✅ 動画（埋め込み） */}
           {Array.isArray(doc.videos) && doc.videos.length > 0 && (
-            <div style={{ display: "grid", gap: "20px" }}>
-              {doc.videos.map((v, i) => {
-                const embed = toEmbedUrl(v);
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "20px",
+              }}
+            >
+              {doc.videos.map((url, index) => {
+                if (!url) return null;
+
+                const embed = toEmbedUrl(url);
 
                 return (
-                  <div key={i}>
+                  <div key={index}>
                     {embed ? (
                       <div
                         style={{
                           position: "relative",
                           paddingTop: "56.25%",
+                          borderRadius: "12px",
+                          overflow: "hidden",
+                          background: "#000",
                         }}
                       >
-                        <iframe
-                          src={embed}
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            width: "100%",
-                            height: "100%",
-                            border: 0,
-                          }}
-                          allowFullScreen
-                        />
+                        {embed}
                       </div>
                     ) : (
-                      <a href={v} target="_blank" rel="noopener noreferrer">
+                      {url}
                         🎬 動画を見る
                       </a>
                     )}
@@ -140,6 +128,7 @@ export default async function GalleryPage() {
               })}
             </div>
           )}
+
         </section>
       ))}
     </main>
