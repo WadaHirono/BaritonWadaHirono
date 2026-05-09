@@ -4,7 +4,10 @@ import { urlFor } from "@/lib/image";
 
 export default async function Home() {
   const concerts = await client.fetch(
-    `*[_type == "concert"] | order(date asc)`
+    `*[_type == "concert"] | order(date asc){
+      ...,
+      "mainImage": coalesce(mainImage, image)
+    }`
   );
 
   return (
@@ -20,7 +23,6 @@ export default async function Home() {
           backgroundPosition: "center 30%",
         }}
       >
-        {/* 暗くするフィルター */}
         <div
           style={{
             position: "absolute",
@@ -29,7 +31,6 @@ export default async function Home() {
           }}
         />
 
-        {/* テキスト */}
         <div
           style={{
             position: "absolute",
@@ -49,13 +50,11 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* ✅ 本文 */}
       <div style={{ padding: "40px" }}>
 
         {/* お知らせ */}
         <section style={{ marginBottom: "40px" }}>
           <h2 style={{ marginBottom: "10px" }}>お知らせ</h2>
-
           <div
             style={{
               background: "#f5f5f5",
@@ -94,9 +93,10 @@ export default async function Home() {
                       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                     }}
                   >
-                    {concert.image && (
+                    {/* ✅ メイン画像（NEW！） */}
+                    {concert.mainImage && (
                       <img
-                        src={urlFor(concert.image).width(300).url()}
+                        src={urlFor(concert.mainImage).width(300).url()}
                         alt={concert.title}
                         style={{
                           width: "100%",
