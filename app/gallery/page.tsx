@@ -103,7 +103,7 @@ export default async function GalleryPage() {
             </div>
           )}
 
-          {/* ✅ 動画 */}
+          {/* ✅ 動画（完全修正版） */}
           {Array.isArray(doc.videos) && doc.videos.length > 0 && (
             <div style={{ display: "grid", gap: "20px" }}>
               {doc.videos.map((v, i) => {
