@@ -5,6 +5,7 @@ export default async function ProfilePage() {
   const profile = await client.fetch(
     `*[_type == "profile"][0]{
       name,
+      roman,   // ✅ 追加
       image,
       bio
     }`
@@ -16,11 +17,12 @@ export default async function ProfilePage() {
 
   return (
     <main style={{ maxWidth: "800px", margin: "0 auto", padding: "40px" }}>
+
       <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
         プロフィール
       </h1>
 
-      {/* 画像 */}
+      {/* ✅ 画像 */}
       {profile.image && (
         <img
           src={urlFor(profile.image).width(400).url()}
@@ -33,15 +35,23 @@ export default async function ProfilePage() {
         />
       )}
 
-      {/* 名前 */}
-      <h2 style={{ marginBottom: "10px" }}>
+      {/* ✅ 名前 */}
+      <h2 style={{ marginBottom: "5px" }}>
         {profile.name}
       </h2>
 
-      {/* 本文（改行対応） */}
+      {/* ✅ ローマ字（ここ追加） */}
+      {profile.roman && (
+        <p style={{ color: "#666", marginBottom: "15px" }}>
+          {profile.roman}
+        </p>
+      )}
+
+      {/* ✅ 本文 */}
       <div style={{ whiteSpace: "pre-line", lineHeight: "1.8" }}>
         {profile.bio}
       </div>
+
     </main>
   );
 }

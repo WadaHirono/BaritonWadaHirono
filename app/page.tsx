@@ -10,9 +10,12 @@ export default async function Home() {
     }`
   );
 
+  // ✅ 名前（ローマ字追加）
+  const nameJa = "和田広野";
+  const nameEn = "Hirono Wada";
+
   return (
     <main>
-
       {/* ✅ ヒーロー画像 */}
       <div
         style={{
@@ -41,20 +44,25 @@ export default async function Home() {
             textAlign: "center",
           }}
         >
-          <h1 style={{ fontSize: "36px", marginBottom: "10px" }}>
-            和田広野
+          <h1 style={{ fontSize: "36px", marginBottom: "5px" }}>
+            {nameJa}
           </h1>
-          <p style={{ fontSize: "18px" }}>
+
+          {/* ✅ ローマ字 */}
+          <p style={{ fontSize: "16px", opacity: 0.8 }}>
+            {nameEn}
+          </p>
+
+          <p style={{ fontSize: "18px", marginTop: "8px" }}>
             バリトン歌手
           </p>
         </div>
       </div>
 
       <div style={{ padding: "40px" }}>
-
         {/* ✅ お知らせ */}
         <section style={{ marginBottom: "40px" }}>
-          <h2 style={{ marginBottom: "10px" }}>お知らせ</h2>
+          <h2>お知らせ</h2>
           <div
             style={{
               background: "#f5f5f5",
@@ -66,12 +74,11 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ✅ SNS（ここ追加） */}
+        {/* ✅ SNS */}
         <section style={{ marginBottom: "40px" }}>
-          <h2 style={{ marginBottom: "15px" }}>SNS</h2>
+          <h2>SNS</h2>
 
           <div style={{ display: "flex", gap: "20px" }}>
-
             {/* X */}
             <a
               href="https://x.com/WadaHironoBR"
@@ -107,13 +114,12 @@ export default async function Home() {
                 <path d="M21.8 8s-.2-1.5-.8-2.2c-.7-.7-1.5-.7-1.9-.8C16.3 4.8 12 4.8 12 4.8h0s-4.3 0-7.1.2c-.4 0-1.2.1-1.9.8C2.4 6.5 2.2 8 2.2 8S2 9.7 2 11.5v1c0 1.8.2 3.5.2 3.5s.2 1.5.8 2.2c.7.7 1.6.7 2 .8 1.5.1 6.3.2 6.3.2s4.3 0 7.1-.2c.4 0 1.2-.1 1.9-.8.6-.7.8-2.2.8-2.2s.2-1.7.2-3.5v-1C22 9.7 21.8 8 21.8 8zM10 14.5v-5l5 2.5-5 2.5z"/>
               </svg>
             </a>
-
           </div>
         </section>
 
         {/* ✅ 公演情報 */}
         <section>
-          <h2 style={{ marginBottom: "20px" }}>公演情報</h2>
+          <h2>公演情報</h2>
 
           <div
             style={{
@@ -164,7 +170,6 @@ export default async function Home() {
               ))}
           </div>
         </section>
-
       </div>
     </main>
   );
