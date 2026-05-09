@@ -36,10 +36,7 @@ export default async function ConcertDetailPage({
 
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-      
-      <h1 style={{ fontSize: "30px", marginBottom: "15px" }}>
-        {concert.title}
-      </h1>
+      <h1 style={{ fontSize: "30px", marginBottom: "15px" }}>{concert.title}</h1>
 
       {concert.date && (
         <p style={{ color: "#666", marginBottom: "5px" }}>
@@ -47,11 +44,9 @@ export default async function ConcertDetailPage({
         </p>
       )}
 
-      {concert.venue && (
-        <p style={{ marginBottom: "20px" }}>{concert.venue}</p>
-      )}
+      {concert.venue && <p style={{ marginBottom: "20px" }}>{concert.venue}</p>}
 
-      {/* ✅ ギャラリー */}
+      {/* ✅ 画像（クリック拡大 + サムネ中央寄せ） */}
       <ConcertLightboxGallery
         title={concert.title}
         mainImage={concert.mainImage}
@@ -59,19 +54,13 @@ export default async function ConcertDetailPage({
       />
 
       {concert.description && (
-        <p style={{
-          whiteSpace: "pre-line",
-          lineHeight: "1.8",
-          marginBottom: "20px",
-        }}>
+        <p style={{ whiteSpace: "pre-line", lineHeight: "1.8", marginBottom: "20px" }}>
           {concert.description}
         </p>
       )}
 
       {concert.price && (
-        <p style={{ fontWeight: "bold", marginBottom: "20px" }}>
-          {concert.price}
-        </p>
+        <p style={{ fontWeight: "bold", marginBottom: "20px" }}>{concert.price}</p>
       )}
 
       {concert.ticketUrl && (

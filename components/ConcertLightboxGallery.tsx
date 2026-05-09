@@ -14,7 +14,6 @@ export default function ConcertLightboxGallery({
   mainImage?: SanityImage;
   gallery?: SanityImage[];
 }) {
-  // 先頭にメイン画像、その後にサブ画像を連結
   const images = useMemo(() => {
     const list: SanityImage[] = [];
     if (mainImage) list.push(mainImage);
@@ -33,11 +32,13 @@ export default function ConcertLightboxGallery({
 
   useEffect(() => {
     if (!open) return;
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
       if (e.key === "ArrowRight") setActive((i) => (i + 1) % images.length);
       if (e.key === "ArrowLeft") setActive((i) => (i - 1 + images.length) % images.length);
     };
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, images.length]);
@@ -45,7 +46,7 @@ export default function ConcertLightboxGallery({
   if (!images.length) return null;
 
   const current = images[active];
-  const currentUrl = urlFor(current).width(1600).auto("format").url();
+  const currentUrl = urlFor(current).width(1600).url();
   const currentCaption = current?.caption;
 
   return (
@@ -65,7 +66,7 @@ export default function ConcertLightboxGallery({
           }}
         >
           <img
-            src={urlFor(images[0]).width(1100).auto("format").url()}
+            src={urlFor(images[0]).width(1200).url()}
             alt={title}
             style={{
               width: "100%",
@@ -73,6 +74,7 @@ export default function ConcertLightboxGallery({
               marginBottom: "14px",
               background: "#f6f6f6",
               objectFit: "contain",
+              display: "block",
             }}
           />
         </button>
@@ -85,14 +87,15 @@ export default function ConcertLightboxGallery({
           <div
             style={{
               display: "flex",
-              justifyContent: "center",   // ←真ん中寄せの肝
+              justifyContent: "center",
               gap: "12px",
               flexWrap: "wrap",
             }}
           >
             {images.map((img, idx) => {
-              const thumbUrl = urlFor(img).width(240).height(170).fit("crop").auto("format").url();
+              const thumbUrl = urlFor(img).width(240).height(170).url();
               const isActive = idx === active;
+
               return (
                 <button
                   key={idx}
@@ -111,7 +114,12 @@ export default function ConcertLightboxGallery({
                   <img
                     src={thumbUrl}
                     alt={`${title} サムネイル ${idx + 1}`}
-                    style={{ width: "220px", height: "160px", objectFit: "cover", display: "block" }}
+                    style={{
+                      width: "220px",
+                      height: "160px",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
                   />
                 </button>
               );
@@ -159,9 +167,14 @@ export default function ConcertLightboxGallery({
               }}
             />
 
-            {/* caption（表/裏など） */}
             {currentCaption && (
-              <div style={{ padding: "10px 14px", color: "#fff", background: "rgba(0,0,0,0.35)" }}>
+              <div
+                style={{
+                  padding: "10px 14px",
+                  color: "#fff",
+                  background: "rgba(0,0,0,0.35)",
+                }}
+              >
                 {currentCaption}
               </div>
             )}
@@ -189,7 +202,7 @@ export default function ConcertLightboxGallery({
               ×
             </button>
 
-            {/* 左右移動（複数画像のみ） */}
+            {/* 左右移動 */}
             {images.length > 1 && (
               <>
                 <button
@@ -213,6 +226,7 @@ export default function ConcertLightboxGallery({
                 >
                   ‹
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setActive((i) => (i + 1) % images.length)}
