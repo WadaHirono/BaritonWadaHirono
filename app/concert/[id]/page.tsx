@@ -1,83 +1,147 @@
 export const dynamic = "force-dynamic";
 
 import { client } from "@/lib/sanity";
-import ConcertLightboxGallery from "@/components/ConcertLightboxGallery";
+import { urlFor } from "@/lib/image";
 
-type ParamsType = { id: string };
+type GalleryDoc = {
+  _id: string;
+  title?: string;
+  images?: any[];
+  videos?: string[];
+};
 
-export default async function ConcertDetailPage({
-  params,
-}: {
-  params: ParamsType | Promise<ParamsType>;
-}) {
-  // ✅ Promiseでもオブジェクトでも対応
-  const resolvedParams =
-    typeof (params as any)?.then === "function"
-      ? await params
-      : params;
+// ✅ YouTube URL → embed変換
+function toEmbedUrl(url: string) {
+  try {
+    const u = new URL(url);
 
-  const slug = (resolvedParams as { id?: string })?.id;
+    if (u.hostname.includes("youtu.be")) {
+      const id = u.pathname.replace("/", "");
+      return `https://www.youtube.com/embed/${id}`;
+    }
 
-  if (!slug) {
-    return (
-      <main style={{ padding: "40px" }}>
-        <p>URLが正しくありません。</p>
-      </main>
-    );
+    if (u.hostname.includes("youtube.com")) {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+
+      if (u.pathname.includes("shorts")) {
+        const id = u.pathname.split("/")[2];
+        return `https://www.youtube.com/embed/${id}`;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
   }
+}
 
-  let concert = null;
+export default async function GalleryPage() {
+  let items: GalleryDoc[] = [];
 
   try {
-    concert = await client.fetch(
-      `*[_type == "concert" && slug.current == $slug][0]{
+    items = await client.fetch(
+      `*[_type == "gallery"] | order(_createdAt desc){
         _id,
         title,
-        date,
-        venue,
-        description,
-        price,
-        ticketUrl,
-        mapUrl,
-        "mainImage": coalesce(mainImage, image),
-        gallery[]
-      }`,
-      { slug }
+        images,
+        videos
+      }`
     );
   } catch {
     return (
       <main style={{ padding: "40px" }}>
-        <p>データ取得に失敗しました。</p>
+        <p>データの取得に失敗しました。</p>
       </main>
     );
   }
 
-  if (!concert) {
+  if (!items.length) {
     return (
       <main style={{ padding: "40px" }}>
-        <p>データが見つかりませんでした。</p>
+        <h1>写真・動画</h1>
+        <p>コンテンツがありません。</p>
       </main>
     );
   }
 
   return (
-    <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-      
-      <h1>{concert.title ?? "公演情報"}</h1>
+    <main style={{ maxWidth: "1000px", margin: "0 auto", padding: "40px" }}>
+      <h1>写真・動画</h1>
 
-      {concert.date && (
-        <p>
-          {new Date(concert.date).toLocaleDateString("ja-JP")}
-        </p>
-      )}
+      {items.map((doc) => (
+        <section key={doc._id} style={{ marginBottom: "30px" }}>
+          {doc.title && <h2>{doc.title}</h2>}
 
-      {concert.venue && <p>{concert.venue}</p>}
+          {/* ✅ 画像 */}
+          {Array.isArray(doc.images) && doc.images.length > 0 && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "10px",
+                marginBottom: "15px",
+              }}
+            >
+              {doc.images.map((img, i) => {
+                if (!img) return null;
 
-      <ConcertLightboxGallery
-        title={concert.title ?? ""}
-        mainImage={concert.mainImage ?? null}
-        gallery={Array.isArray(concert.gallery) ? concert.gallery : []}
-      />
+                return (
+                  <img
+                    key={i}
+                    src={urlFor(img).width(600).auto("format").url()}
+                    alt={doc.title ?? "image"}
+                    style={{
+                      width: "100%",
+                      height: "180px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* ✅ 動画（完全修正版） */}
+          {Array.isArray(doc.videos) && doc.videos.length > 0 && (
+            <div style={{ display: "grid", gap: "20px" }}>
+              {doc.videos.map((v, i) => {
+                const embed = toEmbedUrl(v);
+
+                return (
+                  <div key={i}>
+                    {embed ? (
+                      <div
+                        style={{
+                          position: "relative",
+                          paddingTop: "56.25%",
+                        }}
+                      >
+                        <iframe
+                          src={embed}
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
+                            border: 0,
+                          }}
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <a href={v} target="_blank" rel="noopener noreferrer">
+                        🎬 動画を見る
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      ))}
     </main>
   );
 }
