@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
+import ConcertLightboxGallery from "@/components/ConcertLightboxGallery";
 import { client } from "@/lib/sanity";
-import { urlFor } from "@/lib/image";
 
 export default async function ConcertDetailPage({
   params,
@@ -22,7 +22,9 @@ export default async function ConcertDetailPage({
       mapUrl,
 
       "mainImage": coalesce(mainImage, image),
-      gallery[]
+
+      // ✅ captionも使うので明示（captionを使わないなら gallery[] でもOK）
+      gallery[]{..., caption}
     }`,
     { slug }
   );
@@ -54,48 +56,12 @@ export default async function ConcertDetailPage({
         <p style={{ marginBottom: "20px" }}>{concert.venue}</p>
       )}
 
-      {/* ✅ メイン画像（表） */}
-      {concert.mainImage && (
-        <img
-          src={urlFor(concert.mainImage).width(1000).url()}
-          alt={concert.title}
-          style={{
-            width: "100%",
-            borderRadius: "12px",
-            marginBottom: "30px",
-          }}
-        />
-      )}
-
-      {/* ✅ サブ画像（裏・複数） */}
-      {concert.gallery?.length > 0 && (
-        <section style={{ marginBottom: "30px" }}>
-          <h2 style={{ marginBottom: "15px" }}>関連画像</h2>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "12px",
-            }}
-          >
-            {concert.gallery.map((img: any, index: number) => (
-              <img
-                key={index}
-                src={urlFor(img).width(800).url()}
-                alt={`${concert.title} サブ画像 ${index + 1}`}
-                style={{
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                  border: "1px solid #ddd",
-                }}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* ✅ 画像：クリック拡大 + サムネ中央寄せ */}
+      <ConcertLightboxGallery
+        title={concert.title}
+        mainImage={concert.mainImage}
+        gallery={concert.gallery}
+      />
 
       {/* ✅ 説明 */}
       {concert.description && (
