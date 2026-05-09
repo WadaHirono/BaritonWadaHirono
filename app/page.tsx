@@ -52,7 +52,7 @@ export default async function Home() {
 
       <div style={{ padding: "40px" }}>
 
-        {/* お知らせ */}
+        {/* ✅ お知らせ */}
         <section style={{ marginBottom: "40px" }}>
           <h2 style={{ marginBottom: "10px" }}>お知らせ</h2>
           <div
@@ -66,7 +66,52 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 公演情報 */}
+        {/* ✅ SNS（ここ追加） */}
+        <section style={{ marginBottom: "40px" }}>
+          <h2 style={{ marginBottom: "15px" }}>SNS</h2>
+
+          <div style={{ display: "flex", gap: "20px" }}>
+
+            {/* X */}
+            <a
+              href="https://x.com/WadaHironoBR"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "black" }}
+            >
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 3h4l5 7 5-7h4l-7 10 8 11h-4l-6-8-6 8H3l8-11-7-10z"/>
+              </svg>
+            </a>
+
+            {/* Instagram */}
+            <a
+              href="https://www.instagram.com/hirono_wada/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#E4405F" }}
+            >
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm5 5c2.8 0 5 2.2 5 5s-2.2 5-5 5-5-2.2-5-5 2.2-5 5-5zm6.5-.7c.8 0 1.5.7 1.5 1.5S19.3 9 18.5 9 17 8.3 17 7.5 17.7 6.3 18.5 6.3zM12 9c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"/>
+              </svg>
+            </a>
+
+            {/* YouTube */}
+            <a
+              href="https://www.youtube.com/@hironowada9166"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#FF0000" }}
+            >
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.8 8s-.2-1.5-.8-2.2c-.7-.7-1.5-.7-1.9-.8C16.3 4.8 12 4.8 12 4.8h0s-4.3 0-7.1.2c-.4 0-1.2.1-1.9.8C2.4 6.5 2.2 8 2.2 8S2 9.7 2 11.5v1c0 1.8.2 3.5.2 3.5s.2 1.5.8 2.2c.7.7 1.6.7 2 .8 1.5.1 6.3.2 6.3.2s4.3 0 7.1-.2c.4 0 1.2-.1 1.9-.8.6-.7.8-2.2.8-2.2s.2-1.7.2-3.5v-1C22 9.7 21.8 8 21.8 8zM10 14.5v-5l5 2.5-5 2.5z"/>
+              </svg>
+            </a>
+
+          </div>
+        </section>
+
+        {/* ✅ 公演情報 */}
         <section>
           <h2 style={{ marginBottom: "20px" }}>公演情報</h2>
 
@@ -93,7 +138,6 @@ export default async function Home() {
                       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                     }}
                   >
-                    {/* ✅ メイン画像（NEW！） */}
                     {concert.mainImage && (
                       <img
                         src={urlFor(concert.mainImage).width(300).url()}
