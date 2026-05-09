@@ -19,16 +19,16 @@ type Concert = {
 export default async function ConcertDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const slug = params?.id;
+  // ✅ ここが最重要（必ずawait）
+  const { id: slug } = await params;
 
-  // ✅ URLが壊れていても必ず表示を返す
+  // ✅ slugがないとき
   if (!slug) {
     return (
-      <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-        <h1 style={{ fontSize: "24px", marginBottom: "12px" }}>公演情報</h1>
-        <p style={{ color: "#666" }}>URLが正しくありません。</p>
+      <main style={{ padding: "40px" }}>
+        <p>URLが正しくありません。</p>
       </main>
     );
   }
@@ -36,6 +36,7 @@ export default async function ConcertDetailPage({
   let concert: Concert | null = null;
 
   try {
+    // ✅ Sanity取得（安全版）
     concert = await client.fetch(
       `*[_type == "concert" && slug.current == $slug][0]{
         _id,
@@ -52,108 +53,77 @@ export default async function ConcertDetailPage({
       { slug }
     );
   } catch (e) {
-    // ✅ Sanity接続が落ちてもページは落とさない
+    // ✅ fetch失敗でも落とさない
     return (
-      <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-        <h1 style={{ fontSize: "24px", marginBottom: "12px" }}>公演情報</h1>
-        <p style={{ color: "#b00020", marginBottom: "10px" }}>
-          サーバー側でデータ取得に失敗しました。
-        </p>
-        <p style={{ color: "#666", lineHeight: 1.7 }}>
-          もう一度読み込みをお試しください。改善しない場合は時間をおいて再度お試しください。
-        </p>
+      <main style={{ padding: "40px" }}>
+        <p>データ取得に失敗しました。</p>
       </main>
     );
   }
 
-  // ✅ slugはあるが該当データが無い場合も落とさない
+  // ✅ データ無い場合
   if (!concert) {
     return (
-      <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-        <h1 style={{ fontSize: "24px", marginBottom: "12px" }}>公演情報</h1>
-        <p style={{ color: "#666" }}>公演データが見つかりませんでした。</p>
+      <main style={{ padding: "40px" }}>
+        <p>データが見つかりませんでした。</p>
       </main>
     );
   }
-
-  const dateText =
-    concert.date && !Number.isNaN(Date.parse(concert.date))
-      ? new Date(concert.date).toLocaleDateString("ja-JP")
-      : "";
 
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
       {/* ✅ タイトル */}
-      <h1 style={{ fontSize: "30px", marginBottom: "12px" }}>
+      <h1 style={{ marginBottom: "10px" }}>
         {concert.title ?? "公演情報"}
       </h1>
 
-      {/* ✅ 日付・会場 */}
-      {dateText && (
-        <p style={{ color: "#666", marginBottom: "6px" }}>{dateText}</p>
+      {/* ✅ 日付 */}
+      {concert.date && (
+        <p style={{ color: "#666" }}>
+          {new Date(concert.date).toLocaleDateString("ja-JP")}
+        </p>
       )}
-      {concert.venue && <p style={{ marginBottom: "18px" }}>{concert.venue}</p>}
 
-      {/* ✅ 画像（メイン＋サブ） */}
+      {/* ✅ 会場 */}
+      {concert.venue && <p>{concert.venue}</p>}
+
+      {/* ✅ ギャラリー（完全安全） */}
       <ConcertLightboxGallery
-        title={concert.title ?? "concert"}
+        title={concert.title ?? ""}
         mainImage={concert.mainImage ?? null}
         gallery={Array.isArray(concert.gallery) ? concert.gallery : []}
       />
 
       {/* ✅ 説明 */}
       {concert.description && (
-        <p
-          style={{
-            whiteSpace: "pre-line",
-            lineHeight: "1.8",
-            marginBottom: "20px",
-          }}
-        >
+        <p style={{ whiteSpace: "pre-line" }}>
           {concert.description}
         </p>
       )}
 
       {/* ✅ 料金 */}
-      {concert.price && (
-        <p style={{ fontWeight: "bold", marginBottom: "20px" }}>
-          {concert.price}
-        </p>
-      )}
+      {concert.price && <p>{concert.price}</p>}
 
-      {/* ✅ チケットリンク */}
+      {/* ✅ チケット */}
       {concert.ticketUrl && (
-        <div style={{ marginBottom: "30px" }}>
-          <a
-            href={concert.ticketUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-block",
-              padding: "12px 18px",
-              background: "#000",
-              color: "#fff",
-              borderRadius: "8px",
-              textDecoration: "none",
-            }}
-          >
-            🎫 チケットを購入
-          </a>
-        </div>
+        <a
+          href={concert.ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          🎫 チケット購入
+        </a>
       )}
 
       {/* ✅ 地図 */}
       {concert.mapUrl && (
-        <div>
-          <h2 style={{ marginBottom: "10px" }}>会場案内</h2>
-          <iframe
-            src={concert.mapUrl}
-            width="100%"
-            height="300"
-            style={{ border: 0, borderRadius: "10px" }}
-            loading="lazy"
-          />
-        </div>
+        <iframe
+          src={concert.mapUrl}
+          width="100%"
+          height="300"
+          style={{ border: 0 }}
+          loading="lazy"
+        />
       )}
     </main>
   );
