@@ -14,6 +14,9 @@ type Concert = {
   ticketUrl?: string;
   mapUrl?: string;
   website?: string;
+  organizer?: string; // ✅ 追加
+  role?: string;       // ✅ 追加
+  detailPageUrl?: string; // ✅ 追加
   mainImage?: any;
   gallery?: any[];
 };
@@ -23,7 +26,6 @@ export default async function ConcertDetailPage({
 }: {
   params: ParamsType | Promise<ParamsType>;
 }) {
-  // ✅ Promise / 通常どちらでも対応
   const resolvedParams =
     typeof (params as any)?.then === "function"
       ? await params
@@ -31,7 +33,6 @@ export default async function ConcertDetailPage({
 
   const slug = (resolvedParams as any)?.id;
 
-  // ✅ URL安全ガード
   if (!slug) {
     return (
       <main style={{ padding: "40px" }}>
@@ -53,6 +54,9 @@ export default async function ConcertDetailPage({
         ticketUrl,
         mapUrl,
         website,
+        organizer,       // ✅ 追加
+        role,            // ✅ 追加
+        detailPageUrl,   // ✅ 追加
         "mainImage": coalesce(mainImage, image),
         gallery[]
       }`,
@@ -66,7 +70,6 @@ export default async function ConcertDetailPage({
     );
   }
 
-  // ✅ データ無しガード
   if (!concert) {
     return (
       <main style={{ padding: "40px" }}>
@@ -78,31 +81,43 @@ export default async function ConcertDetailPage({
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
       
-      {/* ✅ タイトル */}
+      {/* タイトル */}
       <h1 style={{ marginBottom: "10px" }}>
         {concert.title ?? "公演情報"}
       </h1>
 
-      {/* ✅ 日付・会場 */}
+      {/* 日付・会場 */}
       {concert.date && (
         <p style={{ color: "#666" }}>
           {new Date(concert.date).toLocaleDateString("ja-JP")}
         </p>
       )}
       {concert.venue && (
-        <p style={{ marginBottom: "15px" }}>
+        <p style={{ marginBottom: "10px" }}>
           {concert.venue}
         </p>
       )}
 
-      {/* ✅ 画像 */}
+      {/* ✅ 新情報（ここ追加） */}
+      {concert.organizer && (
+        <p style={{ color: "#444" }}>
+          【主催】{concert.organizer}
+        </p>
+      )}
+      {concert.role && (
+        <p style={{ marginBottom: "15px" }}>
+          【出演】{concert.role}
+        </p>
+      )}
+
+      {/* 画像 */}
       <ConcertLightboxGallery
         title={concert.title ?? ""}
         mainImage={concert.mainImage ?? null}
         gallery={Array.isArray(concert.gallery) ? concert.gallery : []}
       />
 
-      {/* ✅ コンサート詳細 */}
+      {/* 詳細 */}
       {concert.description && (
         <>
           <h2 style={{ marginTop: "30px" }}>コンサート詳細</h2>
@@ -112,7 +127,24 @@ export default async function ConcertDetailPage({
         </>
       )}
 
-      {/* ✅ チケット料金 */}
+      {/* ✅ 公演詳細ページ（新） */}
+      {concert.detailPageUrl && (
+        <div style={{ marginTop: "20px" }}>
+          <a
+            href={concert.detailPageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "#0070f3",
+              textDecoration: "underline",
+            }}
+          >
+            ▶ 公演詳細ページはこちら
+          </a>
+        </div>
+      )}
+
+      {/* チケット料金 */}
       {concert.price && (
         <>
           <h2 style={{ marginTop: "30px" }}>チケット料金</h2>
@@ -120,22 +152,17 @@ export default async function ConcertDetailPage({
         </>
       )}
 
-      {/* ✅ 公演HP */}
+      {/* 公演HP */}
       {concert.website && (
         <>
           <h2 style={{ marginTop: "30px" }}>公演HP</h2>
-          <a
-            href={concert.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#0070f3" }}
-          >
+          <a href={concert.website} target="_blank" rel="noopener noreferrer">
             {concert.website}
           </a>
         </>
       )}
 
-      {/* ✅ チケット購入ボタン */}
+      {/* チケットボタン */}
       {concert.ticketUrl && (
         <div style={{ marginTop: "30px" }}>
           <a
@@ -156,7 +183,7 @@ export default async function ConcertDetailPage({
         </div>
       )}
 
-      {/* ✅ 会場地図 */}
+      {/* 地図 */}
       {concert.mapUrl && (
         <div style={{ marginTop: "30px" }}>
           <h2>会場地図</h2>
@@ -169,7 +196,6 @@ export default async function ConcertDetailPage({
           />
         </div>
       )}
-
     </main>
   );
 }
