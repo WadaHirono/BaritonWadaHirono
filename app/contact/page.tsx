@@ -32,7 +32,7 @@ export default function ContactPage() {
       >
         {/* ✅ Google Forms */}
         <a
-          href="https://forms.gle/ここにあなたのURL"
+          href="https://forms.office.com/r/UWPHafVb4h"
           target="_blank"
           rel="noopener noreferrer"
           style={{
