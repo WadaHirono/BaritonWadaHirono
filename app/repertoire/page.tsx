@@ -4,6 +4,7 @@ type RepertoireItem = {
   _id: string;
   title?: string;
   composer?: string;
+  composerKana?: string; // ✅ 追加
   genre?: string;
 };
 
@@ -12,12 +13,13 @@ function normalize(s?: string) {
 }
 
 export default async function RepertoirePage() {
-  // まずはSanityから全部取得（並びは最終的にJS側で確定するので order は最低限でOK）
+  // ✅ Sanityから取得（ふりがなも取得）
   const items: RepertoireItem[] = await client.fetch(
     `*[_type == "repertoire"]{
       _id,
       title,
       composer,
+      composerKana,
       genre
     }`
   );
@@ -31,16 +33,16 @@ export default async function RepertoirePage() {
     groups.get(g)!.push(item);
   }
 
-  // ✅ ジャンル名の並び（日本語の辞書順っぽく）
+  // ✅ ジャンル順（日本語の辞書順）
   const sortedGenres = Array.from(groups.keys()).sort((a, b) =>
     a.localeCompare(b, "ja")
   );
 
-  // ✅ 各ジャンル内を「作曲者 → 曲名」でソート
+  // ✅ 各ジャンル内：作曲者（ふりがな）→曲名の順でソート
   for (const g of sortedGenres) {
     groups.get(g)!.sort((x, y) => {
-      const cx = normalize(x.composer);
-      const cy = normalize(y.composer);
+      const cx = normalize(x.composerKana || x.composer);
+      const cy = normalize(y.composerKana || y.composer);
       const tx = normalize(x.title);
       const ty = normalize(y.title);
 
@@ -55,7 +57,7 @@ export default async function RepertoirePage() {
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
       <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>レパートリー</h1>
       <p style={{ color: "#666", marginBottom: "30px" }}>
-        ジャンルごとにまとめ、各ジャンル内は「作曲者順 → 曲名順」で表示しています。
+        ジャンルごとにまとめ、各ジャンル内は「作曲者（五十音順）→ 曲名順」で表示しています。
       </p>
 
       {sortedGenres.map((genre) => {

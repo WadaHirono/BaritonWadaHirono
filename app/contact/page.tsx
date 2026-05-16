@@ -1,59 +1,61 @@
+import Link from "next/link";
+
 export default function ContactPage() {
   return (
-    <main style={{ padding: "40px" }}>
-      <h1>お問い合わせ</h1>
+    <main style={{ padding: "40px", textAlign: "center" }}>
+      <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
+        お問い合わせ
+      </h1>
 
+      <p style={{ marginBottom: "30px", lineHeight: "1.8" }}>
+        演奏のご依頼・その他のお問い合わせは
+        <br />
+        下記フォームよりお願いいたします。
+        <br />
+        レッスンをご希望の方は、専用ページをご覧ください。
+      </p>
+
+      {/* ✅ ボタンエリア */}
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           gap: "20px",
-          marginTop: "30px",
+          flexWrap: "wrap",
         }}
       >
-
-        {/* 演奏依頼ボタン */}
+        {/* ✅ Google Forms */}
         <a
-          href="/演奏依頼書.xlsx"
-          download
+          href="https://forms.office.com/r/UWPHafVb4h"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
-            display: "block",
-            padding: "16px",
-            background: "#000",
+            padding: "14px 24px",
+            background: "#1b2a41",
             color: "#fff",
-            textAlign: "center",
+            borderRadius: "12px",
             textDecoration: "none",
-            borderRadius: "10px",
-            fontWeight: "bold",
+            fontSize: "14px",
           }}
         >
-          🎼 演奏依頼書をダウンロード
+          演奏依頼・お問い合わせフォーム
         </a>
 
-        {/* レッスン申込ボタン */}
+        {/* ✅ レッスンサイト */}
         <a
-          href="/レッスン申込表.xlsx"
-          download
+          href="https://lesson.wadahirono-baritone.net"
           style={{
-            display: "block",
-            padding: "16px",
-            background: "#000",
+            padding: "14px 24px",
+            background: "#6c8fb3",
             color: "#fff",
-            textAlign: "center",
+            borderRadius: "12px",
             textDecoration: "none",
-            borderRadius: "10px",
-            fontWeight: "bold",
+            fontSize: "14px",
           }}
         >
-          🎤 レッスン申込書をダウンロード
+          レッスン専用ページはこちら
         </a>
-
       </div>
-
-      <p style={{ marginTop: "40px" }}>
-        その他のお問い合わせはメールでご連絡ください。<br />
-        📩 donchan.hiono528@gmail.com
-      </p>
     </main>
   );
 }
