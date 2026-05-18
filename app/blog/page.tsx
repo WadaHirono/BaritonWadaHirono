@@ -12,8 +12,11 @@ type Post = {
 
 export default async function BlogListPage() {
   const posts: Post[] = await client.fetch(
-    `*[_type == "blog" && site == "performance"] | order(publishedAt desc){
-      _id, title, slug, publishedAt
+    `*[_type == "performanceBlog"] | order(coalesce(publishedAt, date) desc){
+      _id,
+      title,
+      slug,
+      "publishedAt": coalesce(publishedAt, date)
     }`
   );
 
@@ -36,8 +39,14 @@ export default async function BlogListPage() {
                 background: "rgba(255,255,255,0.7)",
               }}
             >
-              <Link href={`/blog/${p.slug.current}`} style={{ textDecoration: "none" }}>
-                <div style={{ fontWeight: 700, color: "#1b2a41" }}>{p.title}</div>
+              <Link
+                href={`/blog/${p.slug.current}`}
+                style={{ textDecoration: "none", display: "block" }}
+              >
+                <div style={{ fontWeight: 700, color: "#1b2a41" }}>
+                  {p.title}
+                </div>
+
                 {p.publishedAt && (
                   <div style={{ color: "#666", fontSize: "13px", marginTop: "6px" }}>
                     {new Date(p.publishedAt).toLocaleDateString("ja-JP")}
