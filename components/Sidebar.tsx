@@ -11,7 +11,6 @@ export default function Sidebar() {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // ✅ 初回マウント後にだけ判定（スマホで一瞬メニューが出る問題を防ぐ）
   useEffect(() => {
     setMounted(true);
 
@@ -28,6 +27,7 @@ export default function Sidebar() {
     return pathname === path || pathname.startsWith(path + "/");
   };
 
+  // ✅ ここに「ブログ」を追加（/blog は必要に応じて変更）
   const menu = useMemo(
     () => [
       { href: "/", label: "TOP・公演情報" },
@@ -35,6 +35,7 @@ export default function Sidebar() {
       { href: "/profile", label: "プロフィール" },
       { href: "/repertoire", label: "レパートリー" },
       { href: "/gallery", label: "写真・動画" },
+      { href: "/blog", label: "ブログ" }, // ✅ 追加
       { href: "/contact", label: "お問い合わせ" },
     ],
     []
@@ -56,12 +57,11 @@ export default function Sidebar() {
     if (isMobile) setOpen(false);
   };
 
-  // ✅ PCは常時表示 / スマホは open のときだけ表示
   const showMenu = mounted ? (isMobile ? open : true) : false;
 
   return (
     <>
-      {/* ✅ スマホ：左上に≡（固定） */}
+      {/* スマホ：左上に≡（固定） */}
       {mounted && isMobile && (
         <button
           type="button"
@@ -88,7 +88,7 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* ✅ メニュー本体 */}
+      {/* メニュー本体 */}
       {showMenu && (
         <nav
           aria-label="サイトメニュー"
@@ -99,8 +99,6 @@ export default function Sidebar() {
             padding: "20px",
             height: mounted && isMobile ? "calc(100vh - 52px)" : "100vh",
             overflowY: "auto",
-
-            // PCはsticky / スマホはfixed
             position: mounted && isMobile ? "fixed" : "sticky",
             top: mounted && isMobile ? 52 : 0,
             left: 0,
@@ -119,7 +117,7 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {/* ✅ スマホでメニュー開いてる時、背景タップで閉じる */}
+      {/* スマホ：背景タップで閉じる */}
       {mounted && isMobile && open && (
         <div
           onClick={() => setOpen(false)}
