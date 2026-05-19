@@ -21,13 +21,12 @@ export default function Sidebar() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // /concert/xxx でも「TOP・公演情報」をアクティブ扱い
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/" || pathname.startsWith("/concert");
     return pathname === path || pathname.startsWith(path + "/");
   };
 
-  // ✅ ここに「ブログ」を追加（/blog は必要に応じて変更）
+  // ✅ ✅ ブログ追加済み
   const menu = useMemo(
     () => [
       { href: "/", label: "TOP・公演情報" },
@@ -35,7 +34,7 @@ export default function Sidebar() {
       { href: "/profile", label: "プロフィール" },
       { href: "/repertoire", label: "レパートリー" },
       { href: "/gallery", label: "写真・動画" },
-      { href: "/blog", label: "ブログ" }, // ✅ 追加
+      { href: "/blog", label: "ブログ" }, // ✅ ここ重要
       { href: "/contact", label: "お問い合わせ" },
     ],
     []
@@ -57,16 +56,14 @@ export default function Sidebar() {
     if (isMobile) setOpen(false);
   };
 
-  const showMenu = mounted ? (isMobile ? open : true) : false;
+  // ✅ ✅ PCは常に表示
+  const showMenu = isMobile ? open : true;
 
   return (
     <>
-      {/* スマホ：左上に≡（固定） */}
-      {mounted && isMobile && (
+      {/* スマホボタン */}
+      {isMobile && (
         <button
-          type="button"
-          aria-label={open ? "メニューを閉じる" : "メニューを開く"}
-          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           style={{
             position: "fixed",
@@ -77,35 +74,32 @@ export default function Sidebar() {
             background: "#111",
             color: "#fff",
             border: "none",
-            padding: "0 16px",
             zIndex: 1000,
-            cursor: "pointer",
             fontSize: "22px",
             textAlign: "left",
+            paddingLeft: "14px",
           }}
         >
           ≡
         </button>
       )}
 
-      {/* メニュー本体 */}
+      {/* メニュー */}
       {showMenu && (
         <nav
-          aria-label="サイトメニュー"
           style={{
             width: "220px",
             background: "#111",
             color: "#fff",
             padding: "20px",
-            height: mounted && isMobile ? "calc(100vh - 52px)" : "100vh",
-            overflowY: "auto",
-            position: mounted && isMobile ? "fixed" : "sticky",
-            top: mounted && isMobile ? 52 : 0,
+            height: "100vh",
+            position: isMobile ? "fixed" : "sticky",
+            top: isMobile ? 52 : 0,
             left: 0,
             zIndex: 999,
           }}
         >
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {menu.map((item) => (
               <li key={item.href} style={menuItemStyle(item.href)}>
                 <Link href={item.href} style={linkStyle} onClick={closeOnMobile}>
@@ -117,19 +111,17 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {/* スマホ：背景タップで閉じる */}
-      {mounted && isMobile && open && (
+      {/* 背景閉じ */}
+      {isMobile && open && (
         <div
           onClick={() => setOpen(false)}
-          aria-hidden="true"
           style={{
             position: "fixed",
             top: 52,
             left: 220,
             right: 0,
             bottom: 0,
-            background: "rgba(0,0,0,0.35)",
-            zIndex: 998,
+            background: "rgba(0,0,0,0.3)",
           }}
         />
       )}
