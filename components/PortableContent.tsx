@@ -5,9 +5,7 @@ const components: PortableTextComponents = {
   types: {
     image: ({ value }) => {
       try {
-        // ✅ より厳密に（asset._ref が無いなら画像として扱わない）
         if (!value?.asset?._ref) return null;
-
         const src = urlFor(value).width(1200).quality(80).auto("format").url();
         if (!src) return null;
 
@@ -15,13 +13,13 @@ const components: PortableTextComponents = {
           <img
             src={src}
             alt={value?.alt ?? ""}
-            loading="lazy"
             style={{
               width: "100%",
               height: "auto",
               borderRadius: "12px",
               margin: "16px 0",
             }}
+            loading="lazy"
           />
         );
       } catch {
@@ -72,5 +70,21 @@ const components: PortableTextComponents = {
 
 export default function PortableContent({ value }: { value: any }) {
   if (!value) return null;
-  return <PortableText value={value} components={components} />;
+
+  // ✅ 本文が「文字列」の場合でも落ちない（text型ブログ用）
+  if (typeof value === "string") {
+    return (
+      <p style={{ whiteSpace: "pre-wrap", lineHeight: "1.9", margin: "10px 0" }}>
+        {value}
+      </p>
+    );
+  }
+
+  // ✅ 本文が「PortableText配列」の場合
+  if (Array.isArray(value)) {
+    return <PortableText value={value} components={components} />;
+  }
+
+  // ✅ 想定外の型でも落ちない
+  return null;
 }
