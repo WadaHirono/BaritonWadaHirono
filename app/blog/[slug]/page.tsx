@@ -3,55 +3,89 @@ import { client } from "@/lib/sanity";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page({
+type Post = {
+  _id: string;
+  title?: string;
+  publishedAt?: string;
+  content?: string;
+};
+
+export default async function BlogDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: any; // ← 互換のため any
 }) {
-  const slug = params?.slug;
+  // ✅ Promise/通常どちらでも対応
+  const resolvedParams =
+    typeof (params as any)?.then === "function" ? await params : params;
 
-  // ✅ slugチェック
+  // ✅ slug / id どっちで来ても拾う
+  const slug: string | undefined = resolvedParams?.slug ?? resolvedParams?.id;
+
   if (!slug) {
     return (
-      <main style={{ padding: "40px" }}>
+      <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
         <p>URLが正しくありません。</p>
+        <p>
+          <Link href="/blog">ブログ一覧に戻る</Link>
+        </p>
       </main>
     );
   }
 
-  // ✅ ここが超重要（slugを渡す）
-  const post = await client.fetch(
+  // ✅ $slug を使うなら必ず { slug } を渡す
+  const post: Post | null = await client.fetch(
     `*[_type == "performanceBlog" && slug.current == $slug][0]{
+      _id,
       title,
       "publishedAt": coalesce(publishedAt, date),
       content
     }`,
-    { slug } // ← ✅ これがないとエラー
+    { slug }
   );
 
   if (!post) {
     return (
-      <main style={{ padding: "40px" }}>
-        <p>記事が見つかりません。</p>
-        <Link href="/blog">ブログ一覧に戻る</Link>
+      <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+        <h1>記事が見つかりませんでした</h1>
+        <p style={{ color: "#666" }}>URL: /blog/{slug}</p>
+        <p>
+          <Link href="/blog">ブログ一覧に戻る</Link>
+        </p>
       </main>
     );
   }
 
+  const dateText =
+    post.publishedAt && !Number.isNaN(Date.parse(post.publishedAt))
+      ? new Date(post.publishedAt).toLocaleDateString("ja-JP")
+      : null;
+
   return (
     <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
-      <Link href="/blog">← ブログ一覧に戻る</Link>
+      <p style={{ marginBottom: "16px" }}>
+        <Link href="/blog">← ブログ一覧に戻る</Link>
+      </p>
 
-      <h1>{post.title}</h1>
+      <h1 style={{ marginBottom: "10px" }}>{post.title ?? "ブログ"}</h1>
 
-      {post.publishedAt && (
-        <p style={{ color: "#666" }}>
-          {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
+      {dateText && (
+        <p style={{ color: "#666", marginTop: 0, marginBottom: "22px" }}>
+          {dateText}
         </p>
       )}
 
-      <div style={{ whiteSpace: "pre-wrap", marginTop: "20px" }}>
-        {post.content}
+      <div
+        style={{
+          whiteSpace: "pre-wrap",
+          lineHeight: "1.9",
+          background: "rgba(255,255,255,0.65)",
+          border: "1px solid rgba(0,0,0,0.08)",
+          borderRadius: "14px",
+          padding: "18px",
+        }}
+      >
+        {post.content ?? "本文がまだ入力されていません。"}
       </div>
     </main>
   );
