@@ -9,7 +9,6 @@ type Post = {
   slug?: { current?: string };
   publishedAt?: string;
   content?: string;
-  image?: any;
 };
 
 export default async function BlogDetailPage({
@@ -24,20 +23,20 @@ export default async function BlogDetailPage({
       <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
         <p>URLが正しくありません。</p>
         <p>
-          /blog に戻る
+          <Link href="/blog">ブログ一覧に戻る</Link>
         </p>
       </main>
     );
   }
 
+  // ✅ ここが重要：$slug を使うなら { slug } を必ず渡す
   const post: Post | null = await client.fetch(
     `*[_type == "performanceBlog" && slug.current == $slug][0]{
       _id,
       title,
       slug,
       "publishedAt": coalesce(publishedAt, date),
-      content,
-      image
+      content
     }`,
     { slug }
   );
@@ -48,13 +47,12 @@ export default async function BlogDetailPage({
         <h1>記事が見つかりませんでした</h1>
         <p style={{ color: "#666" }}>URL: /blog/{slug}</p>
         <p>
-          /blog に戻る
+          <Link href="/blog">ブログ一覧に戻る</Link>
         </p>
       </main>
     );
   }
 
-  // ✅ 日付は「あるときだけ」表示（Invalid time value を防ぐ）
   const dateText =
     post.publishedAt && !Number.isNaN(Date.parse(post.publishedAt))
       ? new Date(post.publishedAt).toLocaleDateString("ja-JP")
@@ -63,7 +61,7 @@ export default async function BlogDetailPage({
   return (
     <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <p style={{ marginBottom: "16px" }}>
-        /blog に戻る
+        <Link href="/blog">← ブログ一覧に戻る</Link>
       </p>
 
       <h1 style={{ marginBottom: "10px" }}>{post.title ?? "ブログ"}</h1>
@@ -74,7 +72,6 @@ export default async function BlogDetailPage({
         </p>
       )}
 
-      {/* ✅ 本文（改行対応） */}
       <div
         style={{
           whiteSpace: "pre-wrap",
