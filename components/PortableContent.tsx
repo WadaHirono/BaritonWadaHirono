@@ -5,14 +5,17 @@ const components: PortableTextComponents = {
   types: {
     image: ({ value }) => {
       try {
-        if (!value?.asset) return null;
-        const src = urlFor(value).width(1200).quality(80).url();
+        // ✅ より厳密に（asset._ref が無いなら画像として扱わない）
+        if (!value?.asset?._ref) return null;
+
+        const src = urlFor(value).width(1200).quality(80).auto("format").url();
         if (!src) return null;
 
         return (
           <img
             src={src}
             alt={value?.alt ?? ""}
+            loading="lazy"
             style={{
               width: "100%",
               height: "auto",
@@ -26,7 +29,6 @@ const components: PortableTextComponents = {
       }
     },
 
-    // （もしyoutube等の独自ブロックが混じっても落ちないように）
     youtube: ({ value }) => {
       const url: string | undefined = value?.url;
       if (!url) return null;
@@ -43,7 +45,13 @@ const components: PortableTextComponents = {
             <iframe
               src={`https://www.youtube.com/embed/${id}`}
               title="YouTube"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                border: 0,
+              }}
               allowFullScreen
             />
           </div>
@@ -63,6 +71,6 @@ const components: PortableTextComponents = {
 };
 
 export default function PortableContent({ value }: { value: any }) {
-  if (!value) return null; // ✅ bodyが空でも落ちない
+  if (!value) return null;
   return <PortableText value={value} components={components} />;
 }
