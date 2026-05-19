@@ -24,15 +24,23 @@ export default async function BlogDetailPage({ params }: { params: Params }) {
   return (
     <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ marginBottom: "8px" }}>{post.title}</h1>
+
       {post.publishedAt && (
         <p style={{ color: "#666", marginTop: 0 }}>
           {new Date(post.publishedAt).toLocaleDateString("ja-JP")}
         </p>
       )}
 
-      <div style={{ marginTop: "22px" }}>
-        <PortableContent value={post.body} />
-      </div>
+      {/* ✅ body が無い場合も落ちない */}
+      {post.body ? (
+        <div style={{ marginTop: "22px" }}>
+          <PortableContent value={post.body} />
+        </div>
+      ) : (
+        <p style={{ marginTop: "22px", color: "#666" }}>
+          本文がまだ入力されていません。
+        </p>
+      )}
     </main>
   );
 }
