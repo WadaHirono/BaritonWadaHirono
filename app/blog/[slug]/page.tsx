@@ -10,7 +10,7 @@ export default async function BlogDetailPage({ params }: { params: Params }) {
     `*[_type == "performanceBlog" && slug.current == $slug][0]{
       title,
       "publishedAt": coalesce(publishedAt, date),
-      body
+      "body": coalesce(body, content, description)
     }`,
     { slug: params.slug }
   );
