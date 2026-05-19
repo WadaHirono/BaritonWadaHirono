@@ -26,11 +26,10 @@ export default function Sidebar() {
     return pathname === path || pathname.startsWith(path + "/");
   };
 
-  // ✅ ✅ 「スケジュール」を追加
+  // ✅ スケジュール無し版（最終形）
   const menu = useMemo(
     () => [
       { href: "/", label: "TOP・公演情報" },
-      { href: "/schedule", label: "スケジュール" }, // ✅ 追加（必要ならURL変更）
       { href: "/past-concerts", label: "過去公演" },
       { href: "/profile", label: "プロフィール" },
       { href: "/repertoire", label: "レパートリー" },
@@ -38,7 +37,7 @@ export default function Sidebar() {
       { href: "/blog", label: "ブログ" },
       { href: "/contact", label: "お問い合わせ" },
     ],
-    [pathname]
+    []
   );
 
   const linkStyle: React.CSSProperties = {
@@ -57,12 +56,10 @@ export default function Sidebar() {
     if (isMobile) setOpen(false);
   };
 
-  // PCは常時表示 / スマホは open のときだけ表示
   const showMenu = isMobile ? open : true;
 
   return (
     <>
-      {/* スマホボタン */}
       {mounted && isMobile && (
         <button
           onClick={() => setOpen((v) => !v)}
@@ -86,10 +83,8 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* メニュー */}
       {showMenu && (
         <nav
-          aria-label="サイトメニュー"
           style={{
             width: "220px",
             background: "#111",
@@ -102,7 +97,7 @@ export default function Sidebar() {
             zIndex: 999,
           }}
         >
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {menu.map((item) => (
               <li key={item.href} style={menuItemStyle(item.href)}>
                 <Link href={item.href} style={linkStyle} onClick={closeOnMobile}>
@@ -114,11 +109,9 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {/* 背景閉じ */}
       {mounted && isMobile && open && (
         <div
           onClick={() => setOpen(false)}
-          aria-hidden="true"
           style={{
             position: "fixed",
             top: 52,
@@ -126,7 +119,6 @@ export default function Sidebar() {
             right: 0,
             bottom: 0,
             background: "rgba(0,0,0,0.3)",
-            zIndex: 998,
           }}
         />
       )}
