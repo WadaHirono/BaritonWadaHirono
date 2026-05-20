@@ -61,7 +61,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* スマホボタン */}
+      {/* ✅ 最上位レイヤーのハンバーガー */}
       {isMobile && (
         <button
           onClick={() => setOpen((v) => !v)}
@@ -74,7 +74,7 @@ export default function Sidebar() {
             background: "#111",
             color: "#fff",
             border: "none",
-            zIndex: 1000,
+            zIndex: 10000, // ✅ サイドバーより上
             fontSize: "22px",
             textAlign: "left",
             paddingLeft: "14px",
@@ -84,7 +84,7 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* メニュー */}
+      {/* ✅ サイドバー本体（最重要） */}
       {showMenu && (
         <nav
           style={{
@@ -93,9 +93,12 @@ export default function Sidebar() {
             color: "#fff",
             padding: "20px",
             height: "100vh",
-            position: isMobile ? "fixed" : "sticky",
+
+            position: "fixed", // ✅ これ重要（stickyではなく固定）
             top: isMobile ? 52 : 0,
             left: 0,
+
+            zIndex: 9999, // ✅ 最前面
           }}
         >
           <ul style={{ listStyle: "none", padding: 0 }}>
@@ -114,7 +117,7 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {/* 背景 */}
+      {/* ✅ 背景（暗くする） */}
       {isMobile && open && (
         <div
           onClick={() => setOpen(false)}
@@ -125,6 +128,7 @@ export default function Sidebar() {
             right: 0,
             bottom: 0,
             background: "rgba(0,0,0,0.3)",
+            zIndex: 9998,
           }}
         />
       )}
