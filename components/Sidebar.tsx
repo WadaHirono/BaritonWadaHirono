@@ -26,7 +26,6 @@ export default function Sidebar() {
     return pathname === path || pathname.startsWith(path + "/");
   };
 
-  // ✅ スケジュール無し版（最終形）
   const menu = useMemo(
     () => [
       { href: "/", label: "TOP・公演情報" },
@@ -56,11 +55,14 @@ export default function Sidebar() {
     if (isMobile) setOpen(false);
   };
 
+  if (!mounted) return null;
+
   const showMenu = isMobile ? open : true;
 
   return (
     <>
-      {mounted && isMobile && (
+      {/* スマホボタン */}
+      {isMobile && (
         <button
           onClick={() => setOpen((v) => !v)}
           style={{
@@ -76,13 +78,13 @@ export default function Sidebar() {
             fontSize: "22px",
             textAlign: "left",
             paddingLeft: "14px",
-            cursor: "pointer",
           }}
         >
           ≡
         </button>
       )}
 
+      {/* メニュー */}
       {showMenu && (
         <nav
           style={{
@@ -91,16 +93,19 @@ export default function Sidebar() {
             color: "#fff",
             padding: "20px",
             height: "100vh",
-            position: mounted && isMobile ? "fixed" : "sticky",
-            top: mounted && isMobile ? 52 : 0,
+            position: isMobile ? "fixed" : "sticky",
+            top: isMobile ? 52 : 0,
             left: 0,
-            zIndex: 999,
           }}
         >
           <ul style={{ listStyle: "none", padding: 0 }}>
             {menu.map((item) => (
               <li key={item.href} style={menuItemStyle(item.href)}>
-                <Link href={item.href} style={linkStyle} onClick={closeOnMobile}>
+                <Link
+                  href={item.href}
+                  style={linkStyle}
+                  onClick={closeOnMobile}
+                >
                   {item.label}
                 </Link>
               </li>
@@ -109,7 +114,8 @@ export default function Sidebar() {
         </nav>
       )}
 
-      {mounted && isMobile && open && (
+      {/* 背景 */}
+      {isMobile && open && (
         <div
           onClick={() => setOpen(false)}
           style={{
