@@ -1,9 +1,11 @@
 import { client } from "@/lib/sanity";
 
-export default async function Page() {
+export default async function PastConcertsPage() {
   const concerts = await client.fetch(
     `*[_type == "concert" && dateTime(date) < now()]
-     | order(date desc)`
+     | order(date desc){
+      _id, title, date, venue
+     }`
   );
 
   return (
@@ -13,15 +15,27 @@ export default async function Page() {
       {concerts.length === 0 && <p>過去公演はありません。</p>}
 
       {concerts.map((c: any) => (
-        <div key={c._id} style={{ marginBottom: "15px" }}>
+        <div key={c._id} style={{ marginBottom: "20px" }}>
           <h3>{c.title}</h3>
+
           <p>
             {new Date(c.date + "T00:00:00").toLocaleDateString("ja-JP")}
           </p>
+
           <p>{c.venue}</p>
         </div>
       ))}
+
+      {/* ✅ スマホ対策 */}
+      <style>
+        {`
+        @media (max-width: 768px) {
+          main {
+            margin-left: 0 !important;
+          }
+        }
+        `}
+      </style>
     </main>
   );
 }
-``
