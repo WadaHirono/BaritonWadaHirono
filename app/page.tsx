@@ -6,103 +6,67 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const concerts = await client.fetch(
-    `*[_type == "concert" && dateTime(date) >= now()]
-     | order(date asc){
-      _id,
-      title,
-      date,
-      venue,
-      slug,
-      "mainImage": coalesce(mainImage, image)
-     }`
+    `*[_type == "concert" && dateTime(date) >= now() - 1000*60*60*24]
+     | order(date asc)`
   );
 
-  // ✅ 月ごとにグループ化
   const grouped: Record<string, any[]> = {};
 
-  concerts.forEach((concert: any) => {
-    const d = new Date(concert.date + "T00:00:00");
+  concerts.forEach((c: any) => {
+    const d = new Date(c.date + "T00:00:00");
     const key = `${d.getFullYear()}年${d.getMonth() + 1}月`;
-
     if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(concert);
+    grouped[key].push(c);
   });
 
   return (
     <main style={{ marginLeft: "220px" }}>
+      
       {/* ヒーロー */}
-      <div
-        style={{
-          position: "relative",
-          height: "300px",
-          backgroundImage: "url('/hero.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            color: "#fff",
-            textAlign: "center",
-          }}
-        >
+      <div style={{ height: 300, background: "#000", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <h1>和田広野</h1>
           <p>Hirono Wada</p>
           <p>バリトン歌手</p>
         </div>
       </div>
 
-      <div style={{ padding: "40px" }}>
-        {/* お知らせ */}
-        <section style={{ marginBottom: "40px" }}>
-          <h2>お知らせ</h2>
-          <div style={{ background: "#f5f5f5", padding: "15px", borderRadius: "10px" }}>
-            最新の公演情報を更新しました。
-          </div>
-        </section>
+      <div style={{ padding: 40 }}>
 
-        {/* SNS */}
-        <section style={{ marginBottom: "40px" }}>
+        {/* SNS（アイコン版） */}
+        <section style={{ marginBottom: 40 }}>
           <h2>SNS</h2>
-          <div style={{ display: "flex", gap: "20px" }}>
-            <a href="https://x.com/WadaHironoBR" target="_blank">X</a>
-            <a href="https://www.instagram.com/hirono_wada/" target="_blank">Instagram</a>
-            <a href="https://www.youtube.com/@hironowada9166" target="_blank">YouTube</a>
+          <div style={{ display: "flex", gap: 20 }}>
+            <a href="https://x.com/WadaHironoBR" target="_blank">
+              <img src="/x.png" width={40} />
+            </a>
+            <a href="https://www.instagram.com/hirono_wada/" target="_blank">
+              <img src="/instagram.png" width={40} />
+            </a>
+            <a href="https://www.youtube.com/@hironowada9166" target="_blank">
+              <img src="/youtube.png" width={40} />
+            </a>
           </div>
         </section>
 
-        {/* 公演情報 */}
+        {/* 公演 */}
         <section>
           <h2>公演情報</h2>
 
-          {concerts.length === 0 && <p>現在予定されている公演はありません。</p>}
-
           {Object.entries(grouped).map(([month, list]) => (
-            <div key={month} style={{ marginBottom: "40px" }}>
+            <div key={month}>
               <h3>{month}</h3>
 
-              {list.map((concert: any) => (
-                <div key={concert._id} style={{ marginBottom: "15px" }}>
-                  <Link href={`/concert/${concert.slug?.current}`}>
-                    <h4>{concert.title}</h4>
+              {list.map((c: any) => (
+                <div key={c._id}>
+                  <Link href={`/concert/${c.slug?.current}`}>
+                    <h4>{c.title}</h4>
                   </Link>
 
-                  <p style={{ color: "#666" }}>
-                    {new Date(concert.date + "T00:00:00").toLocaleDateString("ja-JP")}
+                  <p>
+                    {new Date(c.date + "T00:00:00").toLocaleDateString("ja-JP")}
                   </p>
-
-                  <p>{concert.venue}</p>
+                  <p>{c.venue}</p>
                 </div>
               ))}
             </div>
