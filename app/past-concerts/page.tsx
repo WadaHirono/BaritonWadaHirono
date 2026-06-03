@@ -9,7 +9,7 @@ type Concert = {
 
 export default async function PastConcertsPage() {
   const concerts: Concert[] = await client.fetch(
-    `*[_type == "concert" && date < now()] | order(date desc)`
+    `*[_type == "concert" && dateTime(date) < dateTime(now() - 1d)] | order(date desc)`
   );
 
   // ✅ 年ごとにグループ化
@@ -30,13 +30,8 @@ export default async function PastConcertsPage() {
 
       {Object.entries(grouped).map(([year, list]) => (
         <div key={year} style={{ marginBottom: "40px" }}>
-          
-          {/* ✅ 年見出し */}
-          <h2 style={{ borderBottom: "2px solid #ddd" }}>
-            {year}
-          </h2>
+          <h2 style={{ borderBottom: "2px solid #ddd" }}>{year}</h2>
 
-          {/* ✅ 公演一覧 */}
           {list.map((concert) => (
             <div key={concert._id} style={{ margin: "10px 0" }}>
               <div>{concert.title}</div>
@@ -46,7 +41,6 @@ export default async function PastConcertsPage() {
               <div>{concert.venue}</div>
             </div>
           ))}
-
         </div>
       ))}
     </main>
