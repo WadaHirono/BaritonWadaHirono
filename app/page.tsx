@@ -8,7 +8,7 @@ export const fetchCache = "force-no-store";
 
 export default async function Home() {
   const concerts = await client.fetch(
-    `*[_type == "concert" && dateTime(date) >= dateTime(now() - 1d)]
+    `*[_type == "concert" && date(date) >= date(now() - 1d)]
      | order(date asc){
       ...,
       "mainImage": coalesce(mainImage, image)
@@ -22,9 +22,7 @@ export default async function Home() {
     const d = new Date(concert.date + "T00:00:00"); // ✅ ズレ防止
     const key = `${d.getFullYear()}年${d.getMonth() + 1}月`;
 
-    if (!grouped[key]) {
-      grouped[key] = [];
-    }
+    if (!grouped[key]) grouped[key] = [];
     grouped[key].push(concert);
   });
 
@@ -32,7 +30,11 @@ export default async function Home() {
   const nameEn = "Hirono Wada";
 
   return (
-    <main>
+    <main
+      style={{
+        marginLeft: "220px", // ✅ PCでサイドバーと被らない
+      }}
+    >
       {/* ヒーロー */}
       <div
         style={{
@@ -60,7 +62,7 @@ export default async function Home() {
             textAlign: "center",
           }}
         >
-          <h1 style={{ fontSize: "36px" }}>{nameJa}</h1>
+          <h1>{nameJa}</h1>
           <p>{nameEn}</p>
           <p>バリトン歌手</p>
         </div>
@@ -85,7 +87,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ✅ 公演情報（進化版） */}
+        {/* 公演情報 */}
         <section>
           <h2>公演情報</h2>
 
@@ -93,7 +95,6 @@ export default async function Home() {
 
           {Object.entries(grouped).map(([month, list]) => (
             <div key={month} style={{ marginBottom: "40px" }}>
-              {/* 月見出し */}
               <h3 style={{ borderBottom: "2px solid #ddd" }}>{month}</h3>
 
               <div
