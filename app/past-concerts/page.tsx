@@ -1,33 +1,53 @@
 import { client } from "@/lib/sanity";
 
-export default async function PastConcertsPage() {
+export default async function Page() {
   const concerts = await client.fetch(
     `*[_type == "concert" && dateTime(date) < now()]
-     | order(date desc){
-      _id,
-      title,
-      date,
-      venue
-     }`
+     | order(date desc)`
   );
 
   return (
-    <main style={{ marginLeft: "220px", padding: 40 }}>
-      <h1>過去公演</h1>
+    <main className="main">
+      <div className="container">
 
-      {concerts.length === 0 && <p>過去公演はありません。</p>}
+        <h1>過去公演</h1>
 
-      {concerts.map((c: any) => (
-        <div key={c._id} style={{ marginBottom: 20 }}>
-          <h3>{c.title}</h3>
+        {concerts.length === 0 && <p>過去公演はありません。</p>}
 
-          <p>
-            {new Date(c.date + "T00:00:00").toLocaleDateString("ja-JP")}
-          </p>
+        {concerts.map((c: any) => (
+          <div key={c._id} className="item">
+            <h3>{c.title}</h3>
+            <p>{new Date(c.date).toLocaleDateString("ja-JP")}</p>
+            <p>{c.venue}</p>
+          </div>
+        ))}
 
-          <p>{c.venue}</p>
-        </div>
-      ))}
+      </div>
+
+      <style jsx>{`
+        .main {
+          margin-left: 220px;
+        }
+
+        .container {
+          padding: 40px;
+        }
+
+        .item {
+          margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+          .main {
+            margin-left: 0;
+          }
+
+          .container {
+            padding: 20px;
+          }
+        }
+      `}</style>
     </main>
   );
 }
+``
