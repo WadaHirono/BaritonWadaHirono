@@ -7,46 +7,20 @@ export default async function Page() {
   );
 
   return (
-    <main className="main">
-      <div className="container">
+    <main style={{ marginLeft: "220px", padding: "40px" }}>
+      <h1>過去公演</h1>
 
-        <h1>過去公演</h1>
+      {concerts.length === 0 && <p>過去公演はありません。</p>}
 
-        {concerts.length === 0 && <p>過去公演はありません。</p>}
-
-        {concerts.map((c: any) => (
-          <div key={c._id} className="item">
-            <h3>{c.title}</h3>
-            <p>{new Date(c.date).toLocaleDateString("ja-JP")}</p>
-            <p>{c.venue}</p>
-          </div>
-        ))}
-
-      </div>
-
-      <style jsx>{`
-        .main {
-          margin-left: 220px;
-        }
-
-        .container {
-          padding: 40px;
-        }
-
-        .item {
-          margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-          .main {
-            margin-left: 0;
-          }
-
-          .container {
-            padding: 20px;
-          }
-        }
-      `}</style>
+      {concerts.map((c: any) => (
+        <div key={c._id} style={{ marginBottom: "15px" }}>
+          <h3>{c.title}</h3>
+          <p>
+            {new Date(c.date + "T00:00:00").toLocaleDateString("ja-JP")}
+          </p>
+          <p>{c.venue}</p>
+        </div>
+      ))}
     </main>
   );
 }
