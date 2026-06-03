@@ -7,15 +7,17 @@ export default async function PastConcertsPage() {
   );
 
   return (
-    <main style={{ marginLeft: "220px", padding: "40px" }}>
+    <main style={{ marginLeft: "220px", padding: 40 }}>
       <h1>過去公演</h1>
 
       {concerts.length === 0 && <p>過去公演はありません。</p>}
 
       {concerts.map((c: any) => (
-        <div key={c._id} style={{ marginBottom: "15px" }}>
+        <div key={c._id} style={{ marginBottom: 15 }}>
           <h3>{c.title}</h3>
-          <p>{new Date(c.date).toLocaleDateString("ja-JP")}</p>
+          <p>
+            {new Date(c.date + "T00:00:00").toLocaleDateString("ja-JP")}
+          </p>
           <p>{c.venue}</p>
         </div>
       ))}
