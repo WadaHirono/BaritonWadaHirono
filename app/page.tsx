@@ -3,14 +3,16 @@ import { client } from "@/lib/sanity";
 import { urlFor } from "@/lib/image";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
 
 export default async function Home() {
   const concerts = await client.fetch(
-    `*[_type == "concert" && date(date) >= date(now() - 1d)]
+    `*[_type == "concert" && dateTime(date) >= now()]
      | order(date asc){
-      ...,
+      _id,
+      title,
+      date,
+      venue,
+      slug,
       "mainImage": coalesce(mainImage, image)
      }`
   );
@@ -19,22 +21,15 @@ export default async function Home() {
   const grouped: Record<string, any[]> = {};
 
   concerts.forEach((concert: any) => {
-    const d = new Date(concert.date + "T00:00:00"); // ✅ ズレ防止
+    const d = new Date(concert.date + "T00:00:00");
     const key = `${d.getFullYear()}年${d.getMonth() + 1}月`;
 
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(concert);
   });
 
-  const nameJa = "和田広野";
-  const nameEn = "Hirono Wada";
-
   return (
-    <main
-      style={{
-        marginLeft: "220px", // ✅ PCでサイドバーと被らない
-      }}
-    >
+    <main style={{ marginLeft: "220px" }}>
       {/* ヒーロー */}
       <div
         style={{
@@ -42,7 +37,7 @@ export default async function Home() {
           height: "300px",
           backgroundImage: "url('/hero.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center 30%",
+          backgroundPosition: "center",
         }}
       >
         <div
@@ -62,8 +57,8 @@ export default async function Home() {
             textAlign: "center",
           }}
         >
-          <h1>{nameJa}</h1>
-          <p>{nameEn}</p>
+          <h1>和田広野</h1>
+          <p>Hirono Wada</p>
           <p>バリトン歌手</p>
         </div>
       </div>
@@ -95,55 +90,21 @@ export default async function Home() {
 
           {Object.entries(grouped).map(([month, list]) => (
             <div key={month} style={{ marginBottom: "40px" }}>
-              <h3 style={{ borderBottom: "2px solid #ddd" }}>{month}</h3>
+              <h3>{month}</h3>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                  gap: "20px",
-                  marginTop: "15px",
-                }}
-              >
-                {list.map((concert: any) => (
-                  <Link
-                    key={concert._id}
-                    href={`/concert/${concert.slug?.current}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <div
-                      style={{
-                        border: "1px solid #ddd",
-                        borderRadius: "12px",
-                        overflow: "hidden",
-                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      {concert.mainImage && (
-                        <img
-                          src={urlFor(concert.mainImage).width(600).url()}
-                          alt={concert.title}
-                          style={{
-                            width: "100%",
-                            height: "160px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      )}
-
-                      <div style={{ padding: "12px" }}>
-                        <h4>{concert.title}</h4>
-
-                        <p style={{ color: "#666" }}>
-                          {new Date(concert.date + "T00:00:00").toLocaleDateString("ja-JP")}
-                        </p>
-
-                        {concert.venue && <p>{concert.venue}</p>}
-                      </div>
-                    </div>
+              {list.map((concert: any) => (
+                <div key={concert._id} style={{ marginBottom: "15px" }}>
+                  <Link href={`/concert/${concert.slug?.current}`}>
+                    <h4>{concert.title}</h4>
                   </Link>
-                ))}
-              </div>
+
+                  <p style={{ color: "#666" }}>
+                    {new Date(concert.date + "T00:00:00").toLocaleDateString("ja-JP")}
+                  </p>
+
+                  <p>{concert.venue}</p>
+                </div>
+              ))}
             </div>
           ))}
         </section>
