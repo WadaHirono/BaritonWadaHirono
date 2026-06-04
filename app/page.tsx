@@ -211,7 +211,7 @@ export default async function Home() {
             linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)),
             url('/hero.jpg');
           background-size: cover;
-          background-position: center center;
+          background-position: center 30%;
           display: flex;
           align-items: center;
           padding: 40px 48px;
