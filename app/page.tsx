@@ -38,9 +38,9 @@ export default async function Home() {
       {/* ヒーロー */}
       <section className="hero">
         <div className="heroOverlay">
-          <p className="heroRoman">HIRONO WADA</p>
-          <h1 className="heroName">和田 紘乃</h1>
-          <p className="heroTitle">ピアニスト / クラシック音楽家</p>
+          <p className="heroRoman">WADA HIRONO</p>
+          <h1 className="heroName">和田 広野</h1>
+          <p className="heroTitle">バリトン歌手 / クラシック音楽家</p>
           <p className="heroLead">
             演奏会情報、出演予定、公演詳細を掲載しています。
             最新情報は下記のSNSでもご覧いただけます。
@@ -71,12 +71,12 @@ export default async function Home() {
           <h2 className="sectionTitle">プロフィール</h2>
           <div className="profileCard">
             <div>
-              <p className="profileRoman">HIRONO WADA</p>
-              <h3 className="profileName">和田 紘乃</h3>
-              <p className="profileRole">ピアニスト / クラシック音楽家</p>
+              <p className="profileRoman">WADA HIRONO</p>
+              <h3 className="profileName">和田 広野</h3>
+              <p className="profileRole">バリトン歌手 / クラシック音楽家</p>
             </div>
             <p className="profileText">
-              ソロ、室内楽、伴奏など幅広い演奏活動を行い、各地のステージに出演。
+              北欧やチェコなども含む数多くの歌曲やオペラアリアなどを中心に幅広く演奏。
               本サイトでは出演情報や過去公演、関連リンクをまとめてご案内しています。
             </p>
           </div>
