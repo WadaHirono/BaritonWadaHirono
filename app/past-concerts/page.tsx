@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { client } from "@/lib/sanity";
 
 export const revalidate = 60;
@@ -7,6 +8,9 @@ type Concert = {
   title: string;
   date: string;
   venue?: string;
+  slug?: {
+    current?: string;
+  };
 };
 
 function formatDate(dateString: string) {
@@ -31,26 +35,35 @@ export default async function PastConcertsPage() {
       _id,
       title,
       date,
-      venue
+      venue,
+      slug
     }
   `);
 
-  const groupedConcerts = concerts.reduce((acc: Record<string, Concert[]>, concert) => {
-    const monthKey = getMonthKey(concert.date);
+  const groupedConcerts = concerts.reduce(
+    (acc: Record<string, Concert[]>, concert) => {
+      const monthKey = getMonthKey(concert.date);
 
-    if (!acc[monthKey]) {
-      acc[monthKey] = [];
-    }
+      if (!acc[monthKey]) {
+        acc[monthKey] = [];
+      }
 
-    acc[monthKey].push(concert);
-    return acc;
-  }, {});
+      acc[monthKey].push(concert);
+      return acc;
+    },
+    {}
+  );
 
   const monthKeys = Object.keys(groupedConcerts);
 
   return (
     <main className="page">
-      <h1 className="pageTitle">過去公演</h1>
+      <div className="header">
+        <h1 className="pageTitle">過去公演</h1>
+        <p className="pageLead">
+          これまでの出演公演を月ごとにまとめて掲載しています。
+        </p>
+      </div>
 
       {concerts.length === 0 && <p>過去公演はありません。</p>}
 
@@ -58,14 +71,34 @@ export default async function PastConcertsPage() {
         <section key={month} className="monthSection">
           <h2 className="monthTitle">{month}</h2>
 
-          <div className="concertList">
-            {groupedConcerts[month].map((c) => (
-              <div key={c._id} className="concertCard">
-                <h3 className="concertTitle">{c.title}</h3>
-                <p className="concertDate">{formatDate(c.date)}</p>
-                {c.venue && <p className="concertVenue">{c.venue}</p>}
-              </div>
-            ))}
+          <div className="concertGrid">
+            {groupedConcerts[month].map((c) =>
+              c.slug?.current ? (
+                <Link
+                  key={c._id}
+                  href={`/concert/${c.slug.current}`}
+                  className="concertCard"
+                >
+                  <div className="cardBody">
+                    <p className="concertDate">{formatDate(c.date)}</p>
+                    <h3 className="concertTitle">{c.title}</h3>
+                    {c.venue && <p className="concertVenue">{c.venue}</p>}
+                    <p className="detailText">詳細を見る →</p>
+                  </div>
+                </Link>
+              ) : (
+                <div key={c._id} className="concertCard disabledCard">
+                  <div className="cardBody">
+                    <p className="concertDate">{formatDate(c.date)}</p>
+                    <h3 className="concertTitle">{c.title}</h3>
+                    {c.venue && <p className="concertVenue">{c.venue}</p>}
+                    <p className="detailText disabledText">
+                      詳細ページはありません
+                    </p>
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </section>
       ))}
@@ -74,57 +107,103 @@ export default async function PastConcertsPage() {
         .page {
           margin-left: 220px;
           padding: 40px;
-          background: #faf8f4;
           min-height: 100vh;
+          background: #faf8f4;
           color: #222;
         }
 
+        .header {
+          margin-bottom: 36px;
+        }
+
         .pageTitle {
+          margin: 0 0 10px;
           font-size: 36px;
-          margin: 0 0 32px;
+          line-height: 1.2;
+        }
+
+        .pageLead {
+          margin: 0;
+          color: #555;
+          line-height: 1.8;
         }
 
         .monthSection {
-          margin-bottom: 40px;
+          margin-bottom: 42px;
         }
 
         .monthTitle {
-          font-size: 24px;
           margin: 0 0 18px;
           padding-bottom: 8px;
-          border-bottom: 2px solid #d8c9a8;
+          font-size: 24px;
           color: #7a5c22;
+          border-bottom: 2px solid #d8c9a8;
         }
 
-        .concertList {
+        .concertGrid {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 18px;
+          gap: 20px;
         }
 
         .concertCard {
+          display: block;
+          text-decoration: none;
+          color: inherit;
           background: #fff;
           border: 1px solid #e5e2dc;
-          border-radius: 18px;
-          padding: 18px 20px;
+          border-radius: 20px;
           box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          overflow: hidden;
+        }
+
+        .concertCard:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 26px rgba(0, 0, 0, 0.09);
+        }
+
+        .cardBody {
+          padding: 20px;
+        }
+
+        .concertDate {
+          margin: 0 0 10px;
+          color: #8b6f35;
+          font-weight: 700;
+          font-size: 14px;
         }
 
         .concertTitle {
           margin: 0 0 10px;
-          font-size: 20px;
+          font-size: 22px;
           line-height: 1.5;
-        }
-
-        .concertDate {
-          margin: 0 0 6px;
-          color: #8b6f35;
-          font-weight: 700;
         }
 
         .concertVenue {
           margin: 0;
           color: #444;
+          line-height: 1.7;
+        }
+
+        .detailText {
+          margin: 16px 0 0;
+          color: #7a5c22;
+          font-weight: 700;
+        }
+
+        .disabledCard {
+          cursor: default;
+          opacity: 0.9;
+        }
+
+        .disabledCard:hover {
+          transform: none;
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .disabledText {
+          color: #888;
         }
 
         @media (max-width: 768px) {
@@ -135,15 +214,19 @@ export default async function PastConcertsPage() {
 
           .pageTitle {
             font-size: 30px;
-            margin-bottom: 24px;
           }
 
           .monthTitle {
             font-size: 22px;
           }
 
-          .concertList {
+          .concertGrid {
             grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .concertTitle {
+            font-size: 20px;
           }
         }
       `}</style>
