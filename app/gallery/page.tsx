@@ -9,7 +9,7 @@ type GalleryDoc = {
   _id: string;
   title?: string;
   images?: any[];
-  image?: any; // ✅ 旧対応追加
+  image?: any;
   videos?: string[];
 };
 
@@ -67,11 +67,10 @@ export default async function GalleryPage() {
     );
   }
 
-  // ✅ 写真（旧＋新を統合）
   const allPhotos = items.flatMap((d) => {
     const arr = [];
-    if (d.image) arr.push(d.image); // ✅ 旧
-    if (Array.isArray(d.images)) arr.push(...d.images); // ✅ 新
+    if (d.image) arr.push(d.image);
+    if (Array.isArray(d.images)) arr.push(...d.images);
     return arr;
   });
 
@@ -95,60 +94,68 @@ export default async function GalleryPage() {
 
   return (
     <main className="page">
-      <h1 className="pageTitle">写真・動画</h1>
+      <div className="inner">
+        <h1 className="pageTitle">写真・動画</h1>
 
-      {/* ✅ 写真 */}
-      <section className="section">
-        <h2 className="sectionTitle">📷 写真</h2>
+        {/* 写真 */}
+        <section className="section">
+          <h2 className="sectionTitle">📷 写真</h2>
 
-        {photoItems.length === 0 ? (
-          <p className="empty">写真がありません。</p>
-        ) : (
-          <GalleryPhotoLightbox photos={photoItems} />
-        )}
-      </section>
+          {photoItems.length === 0 ? (
+            <p className="empty">写真がありません。</p>
+          ) : (
+            <GalleryPhotoLightbox photos={photoItems} />
+          )}
+        </section>
 
-      {/* ✅ 動画 */}
-      <section className="section">
-        <h2 className="sectionTitle">🎥 動画</h2>
+        {/* 動画 */}
+        <section className="section">
+          <h2 className="sectionTitle">🎥 動画</h2>
 
-        {allVideos.length === 0 ? (
-          <p className="empty">動画がありません。</p>
-        ) : (
-          <div className="videoGrid">
-            {allVideos.map((url, idx) => {
-              if (!url) return null;
-              const embed = toEmbedUrl(url);
+          {allVideos.length === 0 ? (
+            <p className="empty">動画がありません。</p>
+          ) : (
+            <div className="videoGrid">
+              {allVideos.map((url, idx) => {
+                if (!url) return null;
+                const embed = toEmbedUrl(url);
 
-              return (
-                <div key={idx}>
-                  {embed ? (
-                    <div className="videoWrap">
-                      <iframe
-                        src={embed}
-                        title={`video-${idx}`}
-                        loading="lazy"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <a href={url} target="_blank" rel="noopener noreferrer">
-                      🎬 動画リンクを開く
-                    </a>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+                return (
+                  <div key={idx}>
+                    {embed ? (
+                      <div className="videoWrap">
+                        <iframe
+                          src={embed}
+                          title={`video-${idx}`}
+                          loading="lazy"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <a href={url} target="_blank" rel="noopener noreferrer">
+                        🎬 動画リンクを開く
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
 
       <style>{`
         .page {
           margin-left: 220px;
-          padding: 40px;
+          min-height: 100vh;
+          background: #faf8f4;
+        }
+
+        /* ✅ ここが重要（余白調整の本体） */
+        .inner {
           max-width: 1000px;
-          margin-right: auto;
+          margin: 0 auto;
+          padding: 40px 40px 40px 60px;
         }
 
         .pageTitle {
@@ -163,6 +170,7 @@ export default async function GalleryPage() {
         .sectionTitle {
           border-bottom: 2px solid #ccc;
           margin-bottom: 20px;
+          padding-bottom: 6px;
         }
 
         .videoGrid {
@@ -186,11 +194,22 @@ export default async function GalleryPage() {
           border: 0;
         }
 
-        /* ✅ スマホ対応（重要） */
+        .empty {
+          color: #666;
+        }
+
+        /* ✅ スマホ対応 */
         @media (max-width: 768px) {
           .page {
             margin-left: 0 !important;
+          }
+
+          .inner {
             padding: 24px 16px 40px;
+          }
+
+          .pageTitle {
+            font-size: 24px;
           }
         }
       `}</style>
