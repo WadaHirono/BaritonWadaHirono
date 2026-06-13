@@ -13,10 +13,10 @@ type Concert = {
   price?: string;
   ticketUrl?: string;
   mapUrl?: string;
-  website?: string;
-  organizer?: string; // ✅ 追加
-  role?: string;       // ✅ 追加
-  detailPageUrl?: string; // ✅ 追加
+  officialUrl?: string;
+  organizer?: string;
+  role?: string;
+  detailPageUrl?: string;
   mainImage?: any;
   gallery?: any[];
 };
@@ -53,10 +53,10 @@ export default async function ConcertDetailPage({
         price,
         ticketUrl,
         mapUrl,
-        website,
-        organizer,       // ✅ 追加
-        role,            // ✅ 追加
-        detailPageUrl,   // ✅ 追加
+        officialUrl,
+        organizer,
+        role,
+        detailPageUrl,
         "mainImage": coalesce(mainImage, image),
         gallery[]
       }`,
@@ -80,7 +80,6 @@ export default async function ConcertDetailPage({
 
   return (
     <main style={{ maxWidth: "900px", margin: "0 auto", padding: "40px" }}>
-      
       {/* タイトル */}
       <h1 style={{ marginBottom: "10px" }}>
         {concert.title ?? "公演情報"}
@@ -92,18 +91,20 @@ export default async function ConcertDetailPage({
           {new Date(concert.date).toLocaleDateString("ja-JP")}
         </p>
       )}
+
       {concert.venue && (
         <p style={{ marginBottom: "10px" }}>
           {concert.venue}
         </p>
       )}
 
-      {/* ✅ 新情報（ここ追加） */}
+      {/* 主催・出演 */}
       {concert.organizer && (
         <p style={{ color: "#444" }}>
           【主催】{concert.organizer}
         </p>
       )}
+
       {concert.role && (
         <p style={{ marginBottom: "15px" }}>
           【出演】{concert.role}
@@ -127,7 +128,7 @@ export default async function ConcertDetailPage({
         </>
       )}
 
-      {/* ✅ 公演詳細ページ（新） */}
+      {/* 公演詳細ページ */}
       {concert.detailPageUrl && (
         <div style={{ marginTop: "20px" }}>
           <a
@@ -152,12 +153,16 @@ export default async function ConcertDetailPage({
         </>
       )}
 
-      {/* 公演HP */}
-      {concert.website && (
+      {/* 公式URL */}
+      {concert.officialUrl && (
         <>
-          <h2 style={{ marginTop: "30px" }}>公演HP</h2>
-          <a href={concert.website} target="_blank" rel="noopener noreferrer">
-            {concert.website}
+          <h2 style={{ marginTop: "30px" }}>公式URL</h2>
+          <a
+            href={concert.officialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {concert.officialUrl}
           </a>
         </>
       )}
