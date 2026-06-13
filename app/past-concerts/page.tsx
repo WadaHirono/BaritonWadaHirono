@@ -54,7 +54,6 @@ export default async function PastConcertsPage() {
     {}
   );
 
-  // ✅ 並び順安定（新しい月が上）
   const monthKeys = Object.keys(groupedConcerts).sort((a, b) =>
     b.localeCompare(a)
   );
@@ -182,6 +181,31 @@ export default async function PastConcertsPage() {
 
         .disabledText {
           color: #888;
+        }
+
+        /* ✅ ここが修正（最重要） */
+        @media (max-width: 768px) {
+          .page {
+            margin-left: 0 !important;
+            padding: 24px 16px 40px;
+          }
+
+          .concertGrid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .pageTitle {
+            font-size: 30px;
+          }
+
+          .monthTitle {
+            font-size: 22px;
+          }
+
+          .concertTitle {
+            font-size: 18px;
+          }
         }
       `}</style>
     </main>
