@@ -30,7 +30,7 @@ function getMonthKey(dateString: string) {
 
 export default async function PastConcertsPage() {
   const concerts: Concert[] = await client.fetch(`
-    *[_type == "concert" && date < string::split(now(), "T")[0]]
+    *[_type == "concert" && date < now()]
     | order(date desc){
       _id,
       title,
@@ -54,7 +54,10 @@ export default async function PastConcertsPage() {
     {}
   );
 
-  const monthKeys = Object.keys(groupedConcerts);
+  // ✅ 並び順安定（新しい月が上）
+  const monthKeys = Object.keys(groupedConcerts).sort((a, b) =>
+    b.localeCompare(a)
+  );
 
   return (
     <main className="page">
@@ -82,7 +85,9 @@ export default async function PastConcertsPage() {
                   <div className="cardBody">
                     <p className="concertDate">{formatDate(c.date)}</p>
                     <h3 className="concertTitle">{c.title}</h3>
-                    {c.venue && <p className="concertVenue">{c.venue}</p>}
+                    {c.venue && (
+                      <p className="concertVenue">{c.venue}</p>
+                    )}
                     <p className="detailText">詳細を見る →</p>
                   </div>
                 </Link>
@@ -91,7 +96,9 @@ export default async function PastConcertsPage() {
                   <div className="cardBody">
                     <p className="concertDate">{formatDate(c.date)}</p>
                     <h3 className="concertTitle">{c.title}</h3>
-                    {c.venue && <p className="concertVenue">{c.venue}</p>}
+                    {c.venue && (
+                      <p className="concertVenue">{c.venue}</p>
+                    )}
                     <p className="detailText disabledText">
                       詳細ページはありません
                     </p>
@@ -119,13 +126,10 @@ export default async function PastConcertsPage() {
         .pageTitle {
           margin: 0 0 10px;
           font-size: 36px;
-          line-height: 1.2;
         }
 
         .pageLead {
-          margin: 0;
           color: #555;
-          line-height: 1.8;
         }
 
         .monthSection {
@@ -134,7 +138,6 @@ export default async function PastConcertsPage() {
 
         .monthTitle {
           margin: 0 0 18px;
-          padding-bottom: 8px;
           font-size: 24px;
           color: #7a5c22;
           border-bottom: 2px solid #d8c9a8;
@@ -142,92 +145,43 @@ export default async function PastConcertsPage() {
 
         .concertGrid {
           display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: repeat(2, 1fr);
           gap: 20px;
         }
 
         .concertCard {
           display: block;
+          background: #fff;
+          border-radius: 20px;
+          padding: 20px;
           text-decoration: none;
           color: inherit;
-          background: #fff;
-          border: 1px solid #e5e2dc;
-          border-radius: 20px;
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          overflow: hidden;
+          transition: 0.2s;
         }
 
         .concertCard:hover {
           transform: translateY(-4px);
-          box-shadow: 0 12px 26px rgba(0, 0, 0, 0.09);
-        }
-
-        .cardBody {
-          padding: 20px;
         }
 
         .concertDate {
-          margin: 0 0 10px;
           color: #8b6f35;
           font-weight: 700;
-          font-size: 14px;
         }
 
         .concertTitle {
-          margin: 0 0 10px;
-          font-size: 22px;
-          line-height: 1.5;
+          font-size: 20px;
         }
 
         .concertVenue {
-          margin: 0;
           color: #444;
-          line-height: 1.7;
         }
 
         .detailText {
-          margin: 16px 0 0;
           color: #7a5c22;
-          font-weight: 700;
-        }
-
-        .disabledCard {
-          cursor: default;
-          opacity: 0.9;
-        }
-
-        .disabledCard:hover {
-          transform: none;
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
         }
 
         .disabledText {
           color: #888;
-        }
-
-        @media (max-width: 768px) {
-          .page {
-            margin-left: 0 !important;
-            padding: 24px 16px 40px;
-          }
-
-          .pageTitle {
-            font-size: 30px;
-          }
-
-          .monthTitle {
-            font-size: 22px;
-          }
-
-          .concertGrid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-
-          .concertTitle {
-            font-size: 20px;
-          }
         }
       `}</style>
     </main>
